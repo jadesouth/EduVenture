@@ -6,10 +6,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn'    => '',
-    'hostname' => 'localhost',
-    'username' => '',
-    'password' => '',
-    'database' => '',
+    'hostname' => 'rm-2ze19m6k6z5dy61zbo.mysql.rds.aliyuncs.com',
+    'username' => 'development',
+    'password' => 'Development123',
+    'database' => 'edu_venture',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
     'pconnect' => FALSE,
