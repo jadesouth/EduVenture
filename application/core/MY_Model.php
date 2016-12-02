@@ -523,7 +523,7 @@ class MY_Model extends CI_Model
      */
     public function printQuery()
     {
-        echo $this->last_query();
+        echo $this->db->last_query();
         return $this;
     }
 

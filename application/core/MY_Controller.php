@@ -9,6 +9,8 @@
  * @property CI_Pagination                 $pagination
  * @property CI_Session                    $session
  *
+ * @property Course_model                   $course_model
+ *
  * @author wangnan <wangnanphp@163.com>
  * @date   2016-12-01 12:16:50
  */
