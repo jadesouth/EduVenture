@@ -37,9 +37,24 @@ function iRectangle() {
 $(function () {
     // layui
     layui.use(['layer', 'form', 'upload'], function () {
-        var layer = layui.layer;
-        var form = layui.form;
-        var upload = layui.upload();
+        // 上传课程封面图
+        layui.upload({
+            url: '/upload/courseCoverImage'
+            ,ext: 'jpg|png|gif|jpeg'
+            ,success: function(response){
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
     });
     // Create course
     $("#create-course").click(function () {
@@ -107,10 +122,6 @@ $(function () {
         $("input[name='rb-lng']").val(rectangleRBLng);
         $("input[name='rb-lat']").val(rectangleRBLat);
     });
-    // upload image
-//    layui.upload({
-//      ext: 'jpg|png|gif'
-//    });
     // Logout
     $("#logout").click(function () {
         var logoutIndex = layer.confirm('您确定要退出系统吗？', {

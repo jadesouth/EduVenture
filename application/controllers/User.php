@@ -18,13 +18,12 @@ class User extends MY_Controller
     {
         // 已经登陆,直接进内部页面
         if (! empty($this->session->home_login_user)) {
-            redirect(base_url() . 'home');
+            redirect(base_url() . 'course');
         }
         if ('post' == $this->input->method()) {
             $this->load->library('form_validation');
             if (false === $this->form_validation->run()) {
                 http_ajax_response(1, $this->form_validation->error_string());
-
                 return;
             }
 

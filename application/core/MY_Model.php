@@ -73,7 +73,7 @@ class MY_Model extends CI_Model
      * @author wangnan
      * @date   2016-12-01 14:38:52
      */
-    public function getPage(int $page = 0, int $page_size = 20, string $order = '', array $where = [])
+    public function getPage($page = 0, $page_size = 20, $order = '', array $where = [])
     {
         // search
         if (! empty($where)) {
@@ -106,7 +106,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:14:05
      */
-    public function create(array $data = [], bool $clean_up = true)
+    public function create(array $data = [], $clean_up = true)
     {
         $data = array_merge($this->_insertData, $data);
         if (empty($data) || ! is_array($data)) {
@@ -127,7 +127,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:15:11
      */
-    public function createBatch(array $data = [], bool $clean_up = true)
+    public function createBatch(array $data = [], $clean_up = true)
     {
         $data = array_merge($this->_insertData, $data);
         if (empty($data) || ! is_array($data)) {
@@ -148,7 +148,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:24:58
      */
-    public function remove(int $id, bool $clean_up = true)
+    public function remove($id, $clean_up = true)
     {
         if (0 >= $id) {
             return false;
@@ -173,7 +173,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:17:14
      */
-    public function delete(bool $clean_up = true)
+    public function delete($clean_up = true)
     {
         $this->conditions($clean_up);
         $data['deleted_at'] = date('Y-m-d H:i:s');
@@ -192,7 +192,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:22:46
      */
-    public function modify(int $id, array $data = [], bool $clean_up = true)
+    public function modify($id, array $data = [], $clean_up = true)
     {
         if (0 >= $id) {
             return false;
@@ -224,7 +224,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:22:57
      */
-    public function update(array $data = [], bool $clean_up = true)
+    public function update(array $data = [], $clean_up = true)
     {
         $data = array_merge($this->_updateData, $data);
         if (empty($data) || ! is_array($data)) {
@@ -248,7 +248,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:24:03
      */
-    public function find(int $id, bool $clean_up = true)
+    public function find($id, $clean_up = true)
     {
         if (0 >= $id) {
             return false;
@@ -274,7 +274,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:24:19
      */
-    public function get(bool $clean_up = true)
+    public function get($clean_up = true)
     {
         $this->conditions($clean_up);
         $this->db->limit(1);
@@ -296,10 +296,13 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:32:22
      */
-    public function leftGet(bool $clean_up = true)
+    public function leftGet($clean_up = true)
     {
         reset($this->_leftJoin);
-        if (empty($table = key($this->_leftJoin)) || empty($join_cond = current($this->_leftJoin))) {
+        $table = key($this->_leftJoin);
+        $join_cond = current($this->_leftJoin);
+
+        if (empty($table) || empty($join_cond)) {
             return false;
         }
 
@@ -327,10 +330,12 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:32:36
      */
-    public function rightGet(bool $clean_up = true)
+    public function rightGet($clean_up = true)
     {
         reset($this->_rightJoin);
-        if (empty($table = key($this->_rightJoin)) || empty($join_cond = current($this->_rightJoin))) {
+        $table = key($this->_rightJoin);
+        $join_cond = current($this->_rightJoin);
+        if (empty($table) || empty($join_cond)) {
             return false;
         }
 
@@ -358,7 +363,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:24:28
      */
-    public function read(bool $clean_up = true)
+    public function read($clean_up = true)
     {
         $this->conditions($clean_up);
         $select_fields = $this->_selectFields;
@@ -379,10 +384,12 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-11-15 14:50:00
      */
-    public function leftRead(bool $clean_up = true)
+    public function leftRead($clean_up = true)
     {
         reset($this->_leftJoin);
-        if (empty($table = key($this->_leftJoin)) || empty($join_cond = current($this->_leftJoin))) {
+        $table = key($this->_leftJoin);
+        $join_cond = current($this->_leftJoin);
+        if (empty($table) || empty($join_cond)) {
             return false;
         }
 
@@ -409,10 +416,12 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:32:58
      */
-    public function rightRead(bool $clean_up = true)
+    public function rightRead($clean_up = true)
     {
         reset($this->_rightJoin);
-        if (empty($table = key($this->_rightJoin)) || $join_cond = current($this->_rightJoin)) {
+        $table = key($this->_rightJoin);
+        $join_cond = current($this->_rightJoin);
+        if (empty($table) || empty($join_cond)) {
             return false;
         }
 
@@ -439,7 +448,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:31:46
      */
-    public function count(bool $clean_up = true)
+    public function count($clean_up = true)
     {
         $this->conditions($clean_up);
 
@@ -457,10 +466,13 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:34:43
      */
-    public function leftCount(bool $clean_up = true)
+    public function leftCount($clean_up = true)
     {
         reset($this->_leftJoin);
-        if (empty($table = key($this->_leftJoin)) || empty($join_cond = current($this->_leftJoin))) {
+        $table = key($this->_leftJoin);
+        $join_cond = current($this->_leftJoin);
+
+        if (empty($table) || empty($join_cond)) {
             return false;
         }
 
@@ -483,10 +495,12 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:34:55
      */
-    public function rightCount(bool $clean_up = true)
+    public function rightCount($clean_up = true)
     {
         reset($this->_rightJoin);
-        if (empty($table = key($this->_rightJoin)) || empty($join_cond = current($this->_rightJoin))) {
+        $table = key($this->_rightJoin);
+        $join_cond = current($this->_rightJoin);
+        if (empty($table) || empty($join_cond)) {
             return false;
         }
 
@@ -569,7 +583,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:18:29
      */
-    protected function conditions(bool $clean_up = true)
+    protected function conditions($clean_up = true)
     {
         if (empty($this->_conditions) || ! is_array($this->_conditions)) {
             return false;
@@ -597,7 +611,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-11-14 16:02:32
      */
-    private function parseConditions(array $conditions, string $logical)
+    private function parseConditions(array $conditions, $logical)
     {
         if (empty($conditions) || ('AND' != $logical && 'OR' != $logical)) {
             return false;
@@ -649,7 +663,7 @@ class MY_Model extends CI_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-01 14:20:30
      */
-    private function parseConditionOperator(string $logical, string $expression, $value)
+    private function parseConditionOperator($logical, $expression, $value)
     {
         $logical = strtoupper($logical);
         if ('AND' != $logical && 'OR' != $logical || empty($expression)) {

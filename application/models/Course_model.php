@@ -32,19 +32,62 @@ class Course_model extends MY_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-02 15:31:54
      */
-    public function getPageData(int $page, int $page_size = 20)
+    public function getPageData($page, $page_size = 20)
     {
         // page limit offset
         $page = 0 >= $page ? 1 : $page;
         $limit = 0 >= $page_size ? 20 : $page_size;
         $offset = 0 > $page ? 0 : ($page - 1) * $page_size;
         // select
-        $fields = 'id,name,grade_id,subject,date_created';
+        $fields = 'id,name,grade_id,subject,is_ready,date_created';
         return $this->db->select($fields)
             ->from('epack')
             ->limit($limit, $offset)
             ->order_by('id', 'DESC')
             ->get()
             ->result_array();
+    }
+
+    /**
+     * delById 根据ID删除数据
+     *
+     * @param $id
+     *
+     * @return bool|mixed
+     *
+     * @author wangnan <wangnanphp@163.com>
+     * @date 2016-12-02 21:59:01
+     */
+    public function delById($id)
+    {
+        $id = (int)$id;
+        if(0 >= $id) {
+            return false;
+        }
+
+        return $this->db->where('id', $id)
+            ->delete('epack');
+    }
+
+    /**
+     * releaseCourseById 根据ID发布课程
+     *
+     * @param $id
+     *
+     * @return bool
+     *
+     * @author wangnan <wangnanphp@163.com>
+     * @date 2016-12-02 23:18:24
+     */
+    public function releaseCourseById($id)
+    {
+        $id = (int)$id;
+        if(0 >= $id) {
+            return false;
+        }
+
+        return $this->db->where('id', $id)
+            ->set('is_ready', 1)
+            ->update('epack');
     }
 }

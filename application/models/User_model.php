@@ -19,7 +19,7 @@ class User_model extends MY_Model
      * @author wangnan <wangnanphp@163.com>
      * @date 2016-12-02 01:43:06
      */
-    public function getUserByUserName(string $username, string $fields = 'id')
+    public function getUserByUserName($username, $fields = 'id')
     {
         if(empty($username)) {
             return false;

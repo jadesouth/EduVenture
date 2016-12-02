@@ -44,7 +44,7 @@
             <div class="form-top-right"><i class="fa fa-lock"></i></div>
           </div>
           <div class="form-bottom">
-            <form role="form" id="login-form" action="" method="post" class="login-form">
+            <form role="form" id="login-form" class="login-form">
               <div class="form-group">
                 <label class="sr-only" for="username">Username</label>
                 <input type="text" name="username" placeholder="Username..." class="form-username form-control" id="form-username">
@@ -101,7 +101,7 @@
               dataType: "JSON",
               success: function(response){
                   if(0 == response.status) {
-                      window.location.href = "<?=base_url('home')?>";
+                      window.location.href = "<?=base_url('course')?>";
                   } else if(1 == response.status) {
                       layer.tips(response.msg, '#submit', {
                           tips: [1, '#F24100']

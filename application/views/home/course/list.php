@@ -17,7 +17,7 @@
       <th class="text-center">课程ID</th><th>课程名称</th><th>年级</th><th>学科</th><th>建立时间</th><th>操作</th>
     </tr></thead>
     <tbody>
-    <?php if(empty($course_list)):foreach($course_list as $course):?>
+    <?php if(! empty($course_list)):foreach($course_list as $course):?>
     <tr>
       <td class="text-center"><?=$course['id']?></td>
       <td><?=$course['name']?></td>
@@ -25,10 +25,14 @@
       <td><?=$course['subject']?></td>
       <td><?=$course['date_created']?></td>
       <td>
-        <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
+        <button class="layui-btn layui-btn-mini layui-btn-danger but-course-delete" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
         <button class="layui-btn layui-btn-mini layui-btn-normal edit-course-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
         <button class="layui-btn layui-btn-mini view-task-button"><i class="layui-icon">&#xe60a;</i>&nbsp;查看任务</button>
-        <button class="layui-btn layui-btn-mini layui-btn-warm"><i class="layui-icon">&#xe609;</i>&nbsp;发布</button>
+        <?php if(0 == $course['is_ready']):?>
+        <button class="layui-btn layui-btn-mini layui-btn-warm but-course-release" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe609;</i>&nbsp;发布课程</button>
+        <?php else:?>
+        <button class="layui-btn layui-btn-mini layui-btn-disabled"><i class="layui-icon">&#xe609;</i>&nbsp;已经发布</button>
+        <?php endif;?>
       </td>
     </tr>
     <?php endforeach;else:?>
@@ -36,6 +40,7 @@
     <?php endif;?>
     </tbody>
   </table>
+  <?=empty($page) ? '' : $page?>
 </div>
 <!-- map -->
 <div id="amap" tabindex="0" style="display:none;"></div>
@@ -460,5 +465,71 @@
     </div>
   </form>
 </div>
+<script>
+    // 删除课程
+    $(".but-course-delete").click(function() {
+        var course = $(this).attr('data-course');
+        if(undefined == course || '' == course || false == course) {
+            layer.open({
+                icon: 2,
+                content: "删除课程操作非法"
+            });
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/course/delete",
+            data: {course: course},
+            dataType: "JSON",
+            success: function(response){
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        window.location.reload();
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+    });
+    // 发布课程
+    $(".but-course-release").click(function() {
+        var course = $(this).attr('data-course');
+        if(undefined == course || '' == course || false == course) {
+            layer.open({
+                icon: 2,
+                content: "发布课程操作非法"
+            });
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/course/release",
+            data: {course: course},
+            dataType: "JSON",
+            success: function(response){
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        window.location.reload();
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
