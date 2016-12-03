@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class File_model
+ * Class File_model 文件相关模型
  *
  * @author wangnan <wangnanphp@163.com>
  * @date   2016-12-02 23:49:11

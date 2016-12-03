@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Subject_model
+ * Class Subject_model 学科相关模型
  *
  * @author wangnan <wangnanphp@163.com>
  * @date   2016-12-02 22:35:07

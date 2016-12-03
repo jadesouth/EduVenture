@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Class Course_model
+ * Class Course_model 课程相关模型
  *
  * @author wangnan <wangnanphp@163.com>
- * @date   16-12-2 15:10
+ * @date   2016-12-02 15:10:56
  */
 class Course_model extends MY_Model
 {

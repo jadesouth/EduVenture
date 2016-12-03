@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class User_model
+ * Class User_model 用户相关模型
  *
  * @author wangnan <wangnanphp@163.com>
  * @date   2016-12-02 00:07:17
