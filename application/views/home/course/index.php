@@ -97,8 +97,9 @@
         <label class="layui-form-label">年级</label>
         <div class="layui-input-block">
           <select name="grade">
-            <option value="1">一年级</option>
-            <option value="2">二年级</option>
+            <?php if(! empty($grades)):foreach($grades as $grade_k => $grade_v):?>
+              <option value="<?=$grade_k?>"><?=$grade_v?></option>
+            <?php endforeach;endif;?>
           </select>
         </div>
       </div>

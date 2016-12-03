@@ -29,4 +29,18 @@ $config = [
         ['field' => 'grade', 'label' => '年级', 'rules' => 'trim|required'],
         ['field' => 'subject', 'label' => '年级', 'rules' => 'trim|required'],
     ],
+    // course 课程相关
+    'course/modify' => [ // 编辑课程
+        ['field' => 'course', 'label' => '选择课程', 'rules' => 'trim|required'],
+        ['field' => 'name', 'label' => '课程名', 'rules' => 'trim|required'],
+        ['field' => 'desc', 'label' => '课程描述', 'rules' => 'trim|required'],
+        ['field' => 'share', 'label' => '课程共享', 'rules' => 'trim|required|in_list[0,1]'],
+        ['field' => 'image', 'label' => '封面图', 'rules' => 'trim|required'],
+        ['field' => 'lt-lng', 'label' => '左上角坐标', 'rules' => 'trim|required|decimal'],
+        ['field' => 'lt-lat', 'label' => '左上角坐标', 'rules' => 'trim|required|decimal'],
+        ['field' => 'rb-lat', 'label' => '左下角坐标', 'rules' => 'trim|required|decimal'],
+        ['field' => 'rb-lng', 'label' => '左下角坐标', 'rules' => 'trim|required|decimal'],
+        ['field' => 'grade', 'label' => '年级', 'rules' => 'trim|required'],
+        ['field' => 'subject', 'label' => '年级', 'rules' => 'trim|required'],
+    ],
 ];

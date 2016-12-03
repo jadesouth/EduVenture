@@ -55,15 +55,61 @@ class Course_model extends MY_Model
      * @return int
      *
      * @author wangnan <wangnanphp@163.com>
-     * @date 2016-12-03 11:47:37
+     * @date   2016-12-03 11:47:37
      */
     public function create(array $data = [], $clean_up = true)
     {
-        if(empty($data) || ! is_array($data)) {
+        if (empty($data) || ! is_array($data)) {
             return 0;
         }
 
         return true === $this->db->insert('epack', $data) ? $this->db->insert_id() : 0;
+    }
+
+    /**
+     * modify 根据ID修改数据
+     *
+     * @param int   $id
+     * @param array $data
+     * @param bool  $clean_up
+     * @return bool
+     *
+     * @author wangnan <wangnanphp@163.com>
+     * @date 2016-12-03 17:23:10
+     */
+    public function modify($id, array $data = [], $clean_up = true)
+    {
+        $id = (int)$id;
+        if (0 >= $id) {
+            return false;
+        }
+
+        return $this->db->where('id', $id)
+            ->update('epack', $data);
+    }
+
+    /**
+     * getCourse 根据ID查询课程信息
+     *
+     * @param int    $id
+     * @param string $fields
+     * @return array|bool
+     *
+     * @author wangnan <wangnanphp@163.com>
+     * @date   2016-12-03 14:27:56
+     */
+    public function getCourse($id, $fields = 'id')
+    {
+        $id = (int)$id;
+        if (0 >= $id) {
+            return false;
+        }
+        return $this->db->select($fields)
+            ->from('epack')
+            ->where('id', $id)
+            ->limit(1)
+            ->get()
+            ->row_array();
     }
 
     /**
@@ -74,12 +120,12 @@ class Course_model extends MY_Model
      * @return bool|mixed
      *
      * @author wangnan <wangnanphp@163.com>
-     * @date 2016-12-02 21:59:01
+     * @date   2016-12-02 21:59:01
      */
     public function delById($id)
     {
         $id = (int)$id;
-        if(0 >= $id) {
+        if (0 >= $id) {
             return false;
         }
 
@@ -95,12 +141,12 @@ class Course_model extends MY_Model
      * @return bool
      *
      * @author wangnan <wangnanphp@163.com>
-     * @date 2016-12-02 23:18:24
+     * @date   2016-12-02 23:18:24
      */
     public function releaseCourseById($id)
     {
         $id = (int)$id;
-        if(0 >= $id) {
+        if (0 >= $id) {
             return false;
         }
 

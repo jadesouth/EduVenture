@@ -26,7 +26,7 @@
       <td><?=$course['date_created']?></td>
       <td>
         <button class="layui-btn layui-btn-mini layui-btn-danger but-course-delete" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-        <button class="layui-btn layui-btn-mini layui-btn-normal edit-course-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
+        <button class="layui-btn layui-btn-mini layui-btn-normal edit-course-button" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
         <button class="layui-btn layui-btn-mini view-task-button"><i class="layui-icon">&#xe60a;</i>&nbsp;查看任务</button>
         <?php if(0 == $course['is_ready']):?>
         <button class="layui-btn layui-btn-mini layui-btn-warm but-course-release" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe609;</i>&nbsp;发布课程</button>
@@ -53,24 +53,25 @@
 <script src="/resources/assets/js/course_list.js"></script>
 <!-- edit course -->
 <div class="layui-form" id="edit-course-swap" style="display:none;">
-  <form id="create-form">
+  <form id="modify-course-form">
     <div class="layui-form-item">
       <label class="layui-form-label">课程题目</label>
       <div class="layui-input-block">
-        <input type="text" name="" placeholder="请输入课程题目" autocomplete="off" class="layui-input">
+        <input type="text" name="name" placeholder="请输入课程题目" autocomplete="off" class="layui-input">
+        <input type="hidden" name="course">
       </div>
     </div>
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">课程描述</label>
       <div class="layui-input-block">
-        <textarea placeholder="请输入课程描述内容" class="layui-textarea"></textarea>
+        <textarea name="desc" placeholder="请输入课程描述内容" class="layui-textarea"></textarea>
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">是否共享</label>
       <div class="layui-input-block">
-        <select name="interest">
-          <option value="0" selected="selected">限本校使用</option>
+        <select name="share">
+          <option value="0">限本校使用</option>
           <option value="1">共享给所有学校</option>
         </select>
       </div>
@@ -78,43 +79,46 @@
     <div class="layui-form-item">
       <label class="layui-form-label">封面图</label>
       <div class="layui-input-block">
-        <input type="file" name="file" class="layui-upload-file">
+        <input type="file" name="cover-image" class="layui-upload-file">
+        <input type="hidden" name="image" value="">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">区域选择</label>
       <div class="layui-input-block">
-        <div id="area-lt-lnglat">左上经纬(116.123123, 26.123123)</div>
-        <div id="area-rb-lnglat">右下经纬(116.123123, 26.123123)</div>
+        <div id="area-lt-lnglat">左上经纬(0, 0)</div>
+        <div id="area-rb-lnglat">右下经纬(0, 0)</div>
         <div><button type="button" id="area-rectangle" class="layui-btn layui-btn-normal">选择区域</button></div>
-        <input type="hidden" name="lt-lng">
-        <input type="hidden" name="lt-lat">
-        <input type="hidden" name="rb-lng">
-        <input type="hidden" name="rb-lat">
+        <input value="" type="hidden" name="lt-lng">
+        <input value="" type="hidden" name="lt-lat">
+        <input value="" type="hidden" name="rb-lng">
+        <input value="" type="hidden" name="rb-lat">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">年级</label>
       <div class="layui-input-block">
-        <select name="interest">
-          <option value="0">一年级</option>
-          <option value="1">二年级</option>
+        <select name="grade">
+          <?php if(! empty($grades)):foreach($grades as $grade_k => $grade_v):?>
+            <option value="<?=$grade_k?>"><?=$grade_v?></option>
+          <?php endforeach;endif;?>
         </select>
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">学科</label>
       <div class="layui-input-block">
-        <select name="interest">
-          <option value="0">自然科学</option>
-          <option value="1">社会科学</option>
+        <select name="subject">
+          <?php if(! empty($subjects)):foreach($subjects as $subject):?>
+            <option value="<?=$subject['id']?>"><?=$subject['name']?></option>
+          <?php endforeach;endif;?>
         </select>
       </div>
     </div>
     <div class="layui-form-item">
       <div class="layui-input-block">
-        <button type="reset" class="layui-btn layui-btn-primary">取消</button>
-        <button class="layui-btn" lay-submit lay-filter="*">保存</button>
+        <button type="reset" id="cancel-modify-course" class="layui-btn layui-btn-primary">取消</button>
+        <button type="button" id="submit-modify-course" class="layui-btn" lay-submit lay-filter="*">保存</button>
       </div>
     </div>
     <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->

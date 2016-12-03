@@ -39,12 +39,6 @@ function iRectangle() {
 }
 
 $(function() {
-    // layui
-    layui.use(['layer', 'form', 'upload'], function () {
-        var layer = layui.layer;
-        var form = layui.form;
-        var uoload = layui.upload();
-    });
     // 获取节点
     viewCourseSwap = $("#view-course-swap");
     editCourseSwap = $("#edit-course-swap");
@@ -57,30 +51,112 @@ $(function() {
     editTaskButton = $(".edit-task-button");
     taskCancelButton = $("#task-cancel-button");
     addTaskSubmitButton = $("#add-task-submit-button");
-    // 点击编辑课程按钮
-    $(".edit-course-button").click(function() {
-        viewCourseSwap.hide();
-        amap.show();
-        search.show();
-        editCourseIndex = layer.open({
-            type: 1
-            , title: ['编辑课程', 'font-weight:bold;']
-            , offset: ['10px', '10px']
-            , area: ['500px', 'auto']
-            , maxmin: true
-            , shade: 0
-            , moveType: 1
-            , content: editCourseSwap
-            , cancel: function () {
-                map.off('mousedown', _onMouseDown);
-                map.off('mouseup', _onMouseUp);
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
+    // layui
+    var layer, form, upload;
+    layui.use(['layer', 'form', 'upload'], function () {
+        layer = layui.layer;
+        form = layui.form();
+        upload = layui.upload();
+        // 上传课程封面图
+        layui.upload({
+            url: '/upload/courseCoverImage'
+            ,ext: 'jpg|png|gif|jpeg'
+            ,success: function(response){
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    });
+                    // 赋值
+                    $("input[name='image']").val(response.data.cover);
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
             }
         });
+    });
+
+    // 点击编辑课程按钮
+    $(".edit-course-button").click(function() {
+        // 获取编的课程数据
+        var course = $(this).attr('data-course');
+        if(undefined == course || '' == course || false == course) {
+            layer.open({
+                icon: 2,
+                content: "非法编辑课程操作"
+            });
+            return false;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/course/modify",
+            data: {course: course},
+            dataType: "JSON",
+            success: function(response){
+                if(0 == response.status) {
+                    var data = response.data;
+                    // 给表单赋值
+                    $("input[name='course']").val(data.id);
+                    $("input[name='name']").val(data.name);
+                    $("textarea[name='desc']").val(data.description);
+                    $("select[name='share']").val(data.is_share);
+                    $("input[name='image']").val(data.tn_file_id);
+                    var lt_lnglat = "左上经纬(" + data.ul_lon + ", " + data.ul_lat + ")";
+                    $("#area-lt-lnglat").html(lt_lnglat);
+                    var rb_lnglat = "右下经纬(" + data.br_lon + ", " + data.br_lat + ")";
+                    $("#area-rb-lnglat").html(rb_lnglat);
+                    $("input[name='lt-lng']").val(data.ul_lon);
+                    $("input[name='lt-lat']").val(data.ul_lat);
+                    $("input[name='rb-lng']").val(data.br_lon);
+                    $("input[name='rb-lat']").val(data.br_lat);
+                    $("select[name='grade']").val(data.grade_id);
+                    $("select[name='subject']").val(data.subject);
+                    form.render();
+
+                    viewCourseSwap.hide();
+                    amap.show();
+                    search.show();
+                    editCourseIndex = layer.open({
+                        type: 1
+                        , title: ['编辑课程', 'font-weight:bold;']
+                        , offset: ['10px', '10px']
+                        , area: ['500px', 'auto']
+                        , maxmin: true
+                        , shade: 0
+                        , moveType: 1
+                        , content: editCourseSwap
+                        , cancel: function () {
+                            map.off('mousedown', _onMouseDown);
+                            map.off('mouseup', _onMouseUp);
+                            $('#modify-course-form')[0].reset();
+                            viewCourseSwap.show();
+                            amap.hide();
+                            search.hide();
+                            layer.close(editCourseIndex);
+                            $('#area-lt-lnglat').html('');
+                            $('#area-rb-lnglat').html('');
+                        }
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+    });
+    // 取消课程编辑
+    $("#cancel-modify-course").click(function () {
+        viewCourseSwap.show();
+        amap.hide();
+        search.hide();
+        layer.close(editCourseIndex);
+        $('#area-lt-lnglat').html('');
+        $('#area-rb-lnglat').html('');
     });
     // 点击区域选择选择区域
     $('#area-rectangle').click(function () {
@@ -326,7 +402,30 @@ $(function() {
         layer.closeAll();
     });
     $('.del-item').delegate('button', 'click', function() {
-        alert(1);
         $(this).parent().parent().remove();
+    });
+    // modify course data
+    $('#submit-modify-course').click(function () {
+        $.ajax({
+            type: 'POST'
+            ,url: '/course/modify'
+            ,data: $('#modify-course-form').serialize()
+            ,dataType: 'JSON'
+            ,success: function (response) {
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        window.location.reload();
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
     });
 });

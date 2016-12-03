@@ -8,6 +8,14 @@
  */
 class Course extends Home_Controller
 {
+    private $_grades = [
+        1 => '一年级',
+        2 => '二年级',
+        3 => '三年级',
+        4 => '四年级',
+        5 => '五年级',
+    ];
+
     /**
      * index 课程首页
      *
@@ -19,6 +27,8 @@ class Course extends Home_Controller
         // 获取所有学科
         $this->load->model('subject_model');
         $view_var['subjects'] = $this->subject_model->getAll();
+        // 所有年级
+        $view_var['grades'] = $this->_grades;
 
         $this->load->view('home/course/index', $view_var);
     }
@@ -37,7 +47,7 @@ class Course extends Home_Controller
                 http_ajax_response(1, $this->form_validation->error_string());
                 return false;
             }
-
+            // 创建数据
             $create_data = [
                 'name'         => (string)$this->input->post('name'),
                 'user_id'      => $this->_loginUser['id'],
@@ -63,6 +73,70 @@ class Course extends Home_Controller
             http_ajax_response(0, '创建课程成功!');
             return true;
         } else {
+            http_ajax_response(2, '非法请求!');
+            return true;
+        }
+    }
+
+    /**
+     * modify 修改课程
+     *
+     * @return bool
+     *
+     * @author wangnan <wangnanphp@163.com>
+     * @date 2016-12-03 15:07:47
+     */
+    public function modify()
+    {
+        if ('post' == $this->input->method()) {
+            $course_id = (int)$this->input->post('course');
+            if(0 >= $course_id) {
+                http_ajax_response(2, '非法操作!');
+                return false;
+            }
+            $this->load->library('form_validation');
+            if (false === $this->form_validation->run()) {
+                http_ajax_response(1, $this->form_validation->error_string());
+                return false;
+            }
+            // 修改数据
+            $update_data = [
+                'name'         => (string)$this->input->post('name'),
+                'user_id'      => $this->_loginUser['id'],
+                'description'  => (string)$this->input->post('desc'),
+                'grade_id'     => (int)$this->input->post('grade'),
+                'subject'      => (int)$this->input->post('subject'),
+                'is_share'     => (int)$this->input->post('share'),
+                'is_ready'     => 0, // 默认不发布
+                'ul_lon'       => (float)$this->input->post('lt-lng'),
+                'ul_lat'       => (float)$this->input->post('lt-lat'),
+                'br_lon'       => (float)$this->input->post('rb-lng'),
+                'br_lat'       => (float)$this->input->post('rb-lat'),
+                'date_created' => date('Y-m-d H:i:s'),
+                'tn_file_id'   => (int)$this->input->post('image'),
+            ];
+            $this->load->model('course_model');
+            $res = $this->course_model->modify($course_id, $update_data);
+            if (false === $res) {
+                http_ajax_response(-1, '修改课程失败,请稍后再试!');
+                return false;
+            }
+
+            http_ajax_response(0, '修改课程成功!');
+            return true;
+        } else {
+            $course_id = (int)$this->input->get('course');
+            if (0 >= $course_id) {
+                http_ajax_response(1, '非法请求!');
+            }
+            $this->load->model('course_model');
+            $fields = 'id,name,description,grade_id,subject,is_share,ul_lon,ul_lat,br_lon,br_lat,tn_file_id';
+            $course = $this->course_model->getCourse($course_id, $fields);
+            if (empty($course)) {
+                http_ajax_response(2, '当前课程不存在!');
+            } else {
+                http_ajax_response(0, '获取课程数据成功!', $course);
+            }
             return true;
         }
     }
@@ -89,6 +163,11 @@ class Course extends Home_Controller
             $view_var['page'] = $this->pagination->create_links();
             // content
             $view_var['course_list'] = $this->course_model->getPageData($page);
+            // 获取所有学科
+            $this->load->model('subject_model');
+            $view_var['subjects'] = $this->subject_model->getAll();
+            // 所有年级
+            $view_var['grades'] = $this->_grades;
             $this->load->view('home/course/list', $view_var);
         }
     }
