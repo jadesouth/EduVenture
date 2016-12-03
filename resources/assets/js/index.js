@@ -47,6 +47,8 @@ $(function () {
                         icon: 6,
                         time: 1000
                     });
+                    // 赋值
+                    $("input[name='image']").val(response.data.cover);
                 } else {
                     layer.open({
                         icon: 2,
@@ -122,16 +124,44 @@ $(function () {
         $("input[name='rb-lng']").val(rectangleRBLng);
         $("input[name='rb-lat']").val(rectangleRBLat);
     });
-    // Logout
-    $("#logout").click(function () {
-        var logoutIndex = layer.confirm('您确定要退出系统吗？', {
-            btn: ['退出', '取消']
-            , fix: true
-            , move: false
-        }, function () {
-
-        }, function () {
-            layer.close(logoutIndex);
+    // create course data
+    $('#submit-create-course').click(function () {
+        $.ajax({
+            type: 'POST'
+            ,url: '/course/create'
+            ,data: $('#create-form').serialize()
+            ,dataType: 'JSON'
+            ,success: function (response) {
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        layer.close(createCourseIndex);
+                        $('#create-form')[0].reset();
+                        $('#area-lt-lnglat').html('');
+                        $('#area-rb-lnglat').html('');
+                        window.location.href = "/course/listing";
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
         });
     });
+    // Logout
+    //$("#logout").click(function () {
+    //    var logoutIndex = layer.confirm('您确定要退出系统吗？', {
+    //        btn: ['退出', '取消']
+    //        , fix: true
+    //        , move: false
+    //    }, function () {
+    //
+    //    }, function () {
+    //        layer.close(logoutIndex);
+    //    });
+    //});
 });

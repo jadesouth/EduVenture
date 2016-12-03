@@ -48,7 +48,7 @@ class User extends MY_Controller
 
             // 写入文件Session
             $this->session->home_login_user = [
-                'id'           => $user['id'],
+                'id'           => (int)$user['id'],
                 'username'     => $user['username'],
                 'display_name' => $user['display_name'],
             ];

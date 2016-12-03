@@ -49,6 +49,24 @@ class Course_model extends MY_Model
     }
 
     /**
+     * create 创建课程数据
+     *
+     * @param array $data
+     * @return int
+     *
+     * @author wangnan <wangnanphp@163.com>
+     * @date 2016-12-03 11:47:37
+     */
+    public function create(array $data = [], $clean_up = true)
+    {
+        if(empty($data) || ! is_array($data)) {
+            return 0;
+        }
+
+        return true === $this->db->insert('epack', $data) ? $this->db->insert_id() : 0;
+    }
+
+    /**
      * delById 根据ID删除数据
      *
      * @param $id

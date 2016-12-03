@@ -56,19 +56,19 @@
       <div class="layui-form-item">
         <label class="layui-form-label">课程题目</label>
         <div class="layui-input-block">
-          <input type="text" name="" placeholder="请输入课程题目" autocomplete="off" class="layui-input">
+          <input type="text" name="name" placeholder="请输入课程题目" autocomplete="off" class="layui-input">
         </div>
       </div>
       <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">课程描述</label>
         <div class="layui-input-block">
-          <textarea placeholder="请输入课程描述内容" class="layui-textarea"></textarea>
+          <textarea name="desc" placeholder="请输入课程描述内容" class="layui-textarea"></textarea>
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">是否共享</label>
         <div class="layui-input-block">
-          <select name="interest">
+          <select name="share">
             <option value="0" selected="selected">限本校使用</option>
             <option value="1">共享给所有学校</option>
           </select>
@@ -78,6 +78,7 @@
         <label class="layui-form-label">封面图</label>
         <div class="layui-input-block">
           <input type="file" name="cover-image" lay-type="images" class="layui-upload-file">
+          <input type="hidden" name="image">
         </div>
       </div>
       <div class="layui-form-item">
@@ -95,16 +96,16 @@
       <div class="layui-form-item">
         <label class="layui-form-label">年级</label>
         <div class="layui-input-block">
-          <select name="interest">
-            <option value="0">一年级</option>
-            <option value="1">二年级</option>
+          <select name="grade">
+            <option value="1">一年级</option>
+            <option value="2">二年级</option>
           </select>
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">学科</label>
         <div class="layui-input-block">
-          <select name="interest">
+          <select name="subject">
             <?php if(! empty($subjects)):foreach($subjects as $subject):?>
             <option value="<?=$subject['id']?>"><?=$subject['name']?></option>
             <?php endforeach;endif;?>
@@ -114,7 +115,7 @@
       <div class="layui-form-item">
         <div class="layui-input-block">
           <button type="reset" class="layui-btn layui-btn-primary">取消</button>
-          <button class="layui-btn">保存</button>
+          <button type="button" id="submit-create-course" class="layui-btn">创建课程</button>
         </div>
       </div>
     </form>
