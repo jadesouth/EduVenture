@@ -11,20 +11,27 @@ class Course_model extends MY_Model
     /**
      * getAllCount 获取课程表总数
      *
+     * @param $user_id
      * @return int 总数
      *
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-02 14:51:04
      */
-    public function getAllCount()
+    public function getAllCount($user_id)
     {
+        $user_id = (int)$user_id;
+        if(0 >= $user_id) {
+            return 0;
+        }
         return $this->db->from('epack')
+            ->where('user_id', $user_id)
             ->count_all_results();
     }
 
     /**
      * getPageData 获取分页数据
      *
+     * @param     $user_id
      * @param int $page      第几页
      * @param int $page_size 分页大小
      * @return array
@@ -32,8 +39,12 @@ class Course_model extends MY_Model
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-02 15:31:54
      */
-    public function getPageData($page, $page_size = 20)
+    public function getPageData($user_id, $page, $page_size = 20)
     {
+        $user_id = (int)$user_id;
+        if(0 >= $user_id) {
+            return 0;
+        }
         // page limit offset
         $page = 0 >= $page ? 1 : $page;
         $limit = 0 >= $page_size ? 20 : $page_size;
@@ -42,6 +53,7 @@ class Course_model extends MY_Model
         $fields = 'id,name,grade_id,subject,is_ready,date_created';
         return $this->db->select($fields)
             ->from('epack')
+            ->where('user_id', $user_id)
             ->limit($limit, $offset)
             ->order_by('id', 'DESC')
             ->get()

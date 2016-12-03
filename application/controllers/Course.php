@@ -152,7 +152,7 @@ class Course extends Home_Controller
     public function listing($page = 1)
     {
         $this->load->model('course_model');
-        $total = $this->course_model->getAllCount();
+        $total = $this->course_model->getAllCount($this->_loginUser['id']);
 
         if (0 < $total) {
             // Page configure
@@ -162,7 +162,7 @@ class Course extends Home_Controller
             $this->pagination->initialize($config);
             $view_var['page'] = $this->pagination->create_links();
             // content
-            $view_var['course_list'] = $this->course_model->getPageData($page);
+            $view_var['course_list'] = $this->course_model->getPageData($this->_loginUser['id'], $page);
             // 获取所有学科
             $this->load->model('subject_model');
             $view_var['subjects'] = $this->subject_model->getAll();
