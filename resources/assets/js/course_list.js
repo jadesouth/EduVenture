@@ -1,14 +1,17 @@
 /**
  * Created by wangnan on 16-10-27.
  */
-var editCourseIndex, addTaskIndex, singleIndex, multiIndex, photoIndex, qaIndex;
-var viewCourseSwap, editCourseSwap, taskListSwap, addTaskSwap;
+var editCourseIndex, addTaskIndex, editTaskIndex,singleIndex, multiIndex, photoIndex, qaIndex;
+var viewCourseSwap, editCourseSwap, taskListSwap, addTaskSwap, editTaskSwap;
+var editTaskRectangleLTLng, editTaskRectangleLTLat, editTaskRectangleRBLng, editTaskRectangleRBLat;
 var amap,search;
 var _onMouseDown, _onMouseUp;
 var mouseTool;
-var viewTaskButton, addTaskButton, editTaskButton, taskCancelButton, addTaskSubmitButton;
+var viewTaskButton, addTaskButton, taskCancelButton, addTaskSubmitButton;
 var singleItemNum = 2;
 var multiItemNum = 2;
+var courseID = 0;
+var courseName = '';
 var map = new AMap.Map('amap', {
     resizeEnable: true,
     zoom: 11,
@@ -44,11 +47,11 @@ $(function() {
     editCourseSwap = $("#edit-course-swap");
     taskListSwap = $("#task-list-swap");
     addTaskSwap = $("#add-task-swap");
+    editTaskSwap = $("#edit-task-swap");
     amap = $("#amap");
     search = $("#search");
     viewTaskButton = $(".view-task-button");
     addTaskButton = $("#add-task-button");
-    editTaskButton = $(".edit-task-button");
     taskCancelButton = $("#task-cancel-button");
     addTaskSubmitButton = $("#add-task-submit-button");
     // layui
@@ -59,7 +62,8 @@ $(function() {
         upload = layui.upload();
         // 上传课程封面图
         layui.upload({
-            url: '/upload/courseCoverImage'
+            elem: $('.course-image')
+            ,url: '/upload/courseCoverImage'
             ,ext: 'jpg|png|gif|jpeg'
             ,success: function(response){
                 if(0 == response.status) {
@@ -68,7 +72,49 @@ $(function() {
                         time: 1000
                     });
                     // 赋值
-                    $("input[name='image']").val(response.data.cover);
+                    $("input[name='course-image']").val(response.data.cover);
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+        // 上传任务封面图
+        layui.upload({
+            elem: $('.task-image')
+            ,url: '/upload/taskCoverImage'
+            ,ext: 'jpg|png|gif|jpeg'
+            ,success: function(response){
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    });
+                    // 赋值
+                    $("input[name='task-image']").val(response.data.cover);
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+        // 编辑任务上传封面图
+        layui.upload({
+            elem: $('.edit-task-image')
+            ,url: '/upload/taskCoverImage'
+            ,ext: 'jpg|png|gif|jpeg'
+            ,success: function(response){
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    });
+                    // 赋值
+                    $("input[name='edit-task-image']").val(response.data.cover);
                 } else {
                     layer.open({
                         icon: 2,
@@ -78,7 +124,6 @@ $(function() {
             }
         });
     });
-
     // 点击编辑课程按钮
     $(".edit-course-button").click(function() {
         // 获取编的课程数据
@@ -103,7 +148,7 @@ $(function() {
                     $("input[name='name']").val(data.name);
                     $("textarea[name='desc']").val(data.description);
                     $("select[name='share']").val(data.is_share);
-                    $("input[name='image']").val(data.tn_file_id);
+                    $("input[name='task-image']").val(data.tn_file_id);
                     var lt_lnglat = "左上经纬(" + data.ul_lon + ", " + data.ul_lat + ")";
                     $("#area-lt-lnglat").html(lt_lnglat);
                     var rb_lnglat = "右下经纬(" + data.br_lon + ", " + data.br_lat + ")";
@@ -138,6 +183,7 @@ $(function() {
                             layer.close(editCourseIndex);
                             $('#area-lt-lnglat').html('');
                             $('#area-rb-lnglat').html('');
+                            $("#rectangle-control").hide();
                         }
                     });
                 } else {
@@ -157,6 +203,7 @@ $(function() {
         layer.close(editCourseIndex);
         $('#area-lt-lnglat').html('');
         $('#area-rb-lnglat').html('');
+        $("#rectangle-control").hide();
     });
     // 点击区域选择选择区域
     $('#area-rectangle').click(function () {
@@ -201,16 +248,69 @@ $(function() {
     });
     // 点击查看任务按钮
     viewTaskButton.click(function() {
+        // 获取任务数据
+        var course = $(this).attr('data-course');
+        if(undefined == course || '' == course || false == course) {
+            layer.open({
+                icon: 2,
+                content: "查看任务操作非法"
+            });
+            return false;
+        }
+        courseID = course;
+        courseName = $(this).attr('data-title');
+        $("input[name='task-course']").val(course);
+        $.ajax({
+            type: "GET",
+            url: "/task/listing",
+            data: {course: course},
+            dataType: "JSON",
+            success: function(response){
+                if(0 == response.status) {
+                    var task = response.data.task_list;
+                    var task_tbody = $("#task-tbody");
+                    task_tbody.empty();
+                    if(undefined == task) {
+                        task_tbody.prepend('<tr><td colspan="5" class="text-center" style="padding:20px 0;">暂无任务数据</td></tr>');
+                    } else {
+                        for(var i in task) {
+                            var tr = "";
+                            tr += '<tr><td class="text-center">' + task[i].id +'</td>';
+                            tr += '<td>' + task[i].course_name + '</td>';
+                            tr += '<td>' + task[i].task_name + '</td>';
+                            tr += '<td>' + task[i].date_create + '</td>';
+                            tr += '<td><button class="layui-btn layui-btn-mini layui-btn-danger but-task-del" data-task="';
+                            tr += task[i].id + '"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>';
+                            tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-task-edit" data-task="';
+                            tr += task[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>';
+                            tr += '<button class="layui-btn layui-btn-mini add-topic-button" data-task="';
+                            tr += task[i].id + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
+                            task_tbody.prepend(tr);
+                        }
+                    }
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
         viewCourseSwap.hide();
         taskListSwap.show();
     });
     $("#return-course-button").click(function() {
+        courseID = 0;
         viewCourseSwap.show();
         taskListSwap.hide();
+        $("#task-tbody").empty();
     });
     // 点击添加任务按钮
     var taskFunction = function() {
         amap.show();
+        $("#course-title").html(courseName);
+        $("input[name='task-center-lng']").val('');
+        $("input[name='task-center-lat']").val('');
         addTaskIndex = layer.open({
             type: 1
             , title: ['添加任务', 'font-weight:bold;']
@@ -220,28 +320,89 @@ $(function() {
             , shade: 0
             , moveType: 1
             , content: addTaskSwap
-            , cancel: function () {
-                map.off('mousedown', _onMouseDown);
-                map.off('mouseup', _onMouseUp);
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
-            }
+            , cancel: cancelCreateTaskButton
         });
     };
     addTaskButton.click(taskFunction);
-    // 点击编辑任务按钮
-    editTaskButton.click(taskFunction);
     // 点击添加任务取消按钮
-    taskCancelButton.click(function() {
+    var cancelCreateTaskButton = function() {
+        map.off('mousedown', _onMouseDown);
+        map.off('mouseup', _onMouseUp);
         amap.hide();
         layer.close(addTaskIndex);
-    });
+        $('#task-add-form')[0].reset();
+        $('#task-area-lnglat').html('任务区域中心点经纬(暂无, 暂无)');
+        $("input[name='task-course']").val(0);
+        $("#course-title").html('');
+        $("#task-rectangle-control").hide();
+    };
+    taskCancelButton.click(cancelCreateTaskButton);
+    // 点击添加任务按钮数据
     addTaskSubmitButton.click(function() {
-        amap.hide();
-        layer.close(addTaskIndex);
+        $.ajax({
+            type: 'POST'
+            ,url: '/task/create'
+            ,data: $('#task-add-form').serialize()
+            ,dataType: 'JSON'
+            ,success: function (response) {
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        $.ajax({
+                            type: "GET",
+                            url: "/task/listing",
+                            data: {course: courseID},
+                            dataType: "JSON",
+                            success: function(response){
+                                if(0 == response.status) {
+                                    var task = response.data.task_list;
+                                    var task_tbody = $("#task-tbody");
+                                    task_tbody.empty();
+                                    if(undefined == task) {
+                                        task_tbody.prepend('<tr><td colspan="5" class="text-center" style="padding:20px 0;">暂无任务数据</td></tr>');
+                                    } else {
+                                        for(var i in task) {
+                                            var tr = "";
+                                            tr += '<tr><td class="text-center">' + task[i].id +'</td>';
+                                            tr += '<td>' + task[i].course_name + '</td>';
+                                            tr += '<td>' + task[i].task_name + '</td>';
+                                            tr += '<td>' + task[i].date_create + '</td>';
+                                            tr += '<td><button class="layui-btn layui-btn-mini layui-btn-danger but-task-del" data-task="';
+                                            tr += task[i].id + '"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>';
+                                            tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-task-edit" data-task="';
+                                            tr += task[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>';
+                                            tr += '<button class="layui-btn layui-btn-mini add-topic-button" data-task="';
+                                            tr += task[i].id + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
+                                            task_tbody.prepend(tr);
+                                        }
+                                    }
+                                } else {
+                                    layer.open({
+                                        icon: 2,
+                                        content: response.msg
+                                    });
+                                }
+                            }
+                        });
+                        map.off('mousedown', _onMouseDown);
+                        map.off('mouseup', _onMouseUp);
+                        layer.close(addTaskIndex);
+                        amap.hide();
+                        $('#task-add-form')[0].reset();
+                        $('#task-area-lnglat').html('任务区域中心店经纬(暂无, 暂无)');
+                        $("input[name='task-course']").val(0);
+                        $("#course-title").html('');
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
     });
     // 任务区域选择
     $('#task-area-rectangle').click(function () {
@@ -269,15 +430,19 @@ $(function() {
         map.off('mouseup', _onMouseUp);
         $("#task-rectangle-control").hide();
         $('#task-area-rectangle').html('重选区域');
-        var ltLngLat = '左上经纬(' + taskRectangleLTLng + ', ' + taskRectangleLTLat + ')';
-        var rbLngLat = '右下经纬(' + taskRectangleRBLng + ', ' + taskRectangleRBLat + ')';
-        $('#task-area-lt-lnglat').html(ltLngLat);
-        $('#task-area-rb-lnglat').html(rbLngLat);
+        // southWest:LngLat, northEast:LngLat
+        var taskSWLng = (parseFloat(taskRectangleLTLng) - parseFloat(taskRectangleRBLng)) > 0.000001 ? taskRectangleRBLng : taskRectangleLTLng;
+        var taskSWLat = (parseFloat(taskRectangleLTLat) - parseFloat(taskRectangleRBLat)) > 0.000001 ? taskRectangleRBLat : taskRectangleLTLat;
+        var taskNELng = (parseFloat(taskRectangleLTLng) - parseFloat(taskRectangleRBLng)) > 0.000001 ? taskRectangleLTLng : taskRectangleRBLng;
+        var taskNELat = (parseFloat(taskRectangleLTLat) - parseFloat(taskRectangleRBLat)) > 0.000001 ? taskRectangleLTLat : taskRectangleRBLat;
+        var taskCenter = new AMap.Bounds(new AMap.LngLat(taskSWLng, taskSWLat), new AMap.LngLat(taskNELng, taskNELat)).getCenter();
+        var taskCenterLng = taskCenter.getLng( );
+        var taskCenterLat = taskCenter.getLat( );
+        var taskLngLat = '任务区域中心店经纬(' + taskCenterLng + ', ' + taskCenterLat + ')';
+        $('#task-area-lnglat').html(taskLngLat);
+        $("input[name='task-center-lng']").val(taskCenterLng);
+        $("input[name='task-center-lat']").val(taskCenterLat);
         layer.restore(addTaskIndex);
-        $("input[name='task-lt-lng']").val(taskRectangleLTLng);
-        $("input[name='task-lt-lat']").val(taskRectangleLTLat);
-        $("input[name='task-rb-lng']").val(taskRectangleRBLng);
-        $("input[name='task-rb-lat']").val(taskRectangleRBLat);
         layer.style(addTaskIndex, {
             height: 'auto'
         });
@@ -427,5 +592,220 @@ $(function() {
                 }
             }
         });
+    });
+    // 删除任务数据按钮
+    var task_tbody_e = $("#task-tbody");
+    task_tbody_e.on("click", ".but-task-del", function() {
+        var taskE = $(this);
+        var task = taskE.attr('data-task');
+        if(undefined == task || '' == task || false == task) {
+            layer.open({
+                icon: 2,
+                content: "删除任务操作非法"
+            });
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            url: "/task/delete",
+            data: {task: task},
+            dataType: "JSON",
+            success: function(response){
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        taskE.parent().parent().remove();
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+    });
+    // 点击编辑任务按钮
+    task_tbody_e.on("click", ".but-task-edit", function() {
+        $("input[name='task-center-lng']").val('');
+        $("input[name='task-center-lat']").val('');
+        var taskE = $(this);
+        var task = taskE.attr('data-task');
+        if(undefined == task || '' == task || false == task) {
+            layer.open({
+                icon: 2,
+                content: "编辑任务操作非法"
+            });
+            return false;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/task/modify",
+            data: {task: task},
+            dataType: "JSON",
+            success: function(response){
+                if(0 == response.status) {
+                    var data = response.data;
+                    // 给表单赋值
+                    $("input[name='edit-course-task']").val(data.id);
+                    $("input[name='edit-task-name']").val(data.name);
+                    $("input[name='edit-task-image']").val(data.color);
+                    $('#edit-task-area-lnglat').html('任务区域中心点经纬(' + data.lon +', ' + data.lat + ')');
+                    $("input[name='task-center-lng']").val(data.lon);
+                    $("input[name='task-center-lat']").val(data.lat);
+                    $("#edit-course-title").html(courseName);
+                    form.render();
+                    amap.show();
+                    editTaskIndex = layer.open({
+                        type: 1
+                        , title: ['修改任务', 'font-weight:bold;']
+                        , offset: ['10px', '10px']
+                        , area: ['500px', 'auto']
+                        , maxmin: true
+                        , shade: 0
+                        , moveType: 1
+                        , content: editTaskSwap
+                        , cancel: cancelEditTask
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+    });
+    // 取消编辑任务方法
+    var cancelEditTask = function () {
+        amap.hide();
+        layer.close(editTaskIndex);
+        map.off('mousedown', _onMouseDown);
+        map.off('mouseup', _onMouseUp);
+        $('#modify-task-form')[0].reset();
+        $("#edit-course-title").html('');
+        $('#task-area-lnglat').html('任务区域中心点经纬(暂无, 暂无)');
+        $("input[name='edit-crouse-task']").val(0);
+        $("#edit-task-rectangle-control").hide();
+    };
+    // 取消任务编辑按钮
+    $("#edit-task-cancel-button").click(cancelEditTask);
+    // 编辑任务数据
+    $('#edit-task-submit-button').click(function () {
+        $.ajax({
+            type: 'POST'
+            ,url: '/task/modify'
+            ,data: $('#task-edit-form').serialize()
+            ,dataType: 'JSON'
+            ,success: function (response) {
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        $.ajax({
+                            type: "GET",
+                            url: "/task/listing",
+                            data: {course: courseID},
+                            dataType: "JSON",
+                            success: function(response){
+                                if(0 == response.status) {
+                                    var task = response.data.task_list;
+                                    var task_tbody = $("#task-tbody");
+                                    task_tbody.empty();
+                                    if(undefined == task) {
+                                        task_tbody.prepend('<tr><td colspan="5" class="text-center" style="padding:20px 0;">暂无任务数据</td></tr>');
+                                    } else {
+                                        for(var i in task) {
+                                            var tr = "";
+                                            tr += '<tr><td class="text-center">' + task[i].id +'</td>';
+                                            tr += '<td>' + task[i].course_name + '</td>';
+                                            tr += '<td>' + task[i].task_name + '</td>';
+                                            tr += '<td>' + task[i].date_create + '</td>';
+                                            tr += '<td><button class="layui-btn layui-btn-mini layui-btn-danger but-task-del" data-task="';
+                                            tr += task[i].id + '"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>';
+                                            tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-task-edit" data-task="';
+                                            tr += task[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>';
+                                            tr += '<button class="layui-btn layui-btn-mini add-topic-button" data-task="';
+                                            tr += task[i].id + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
+                                            task_tbody.prepend(tr);
+                                        }
+                                    }
+                                } else {
+                                    layer.open({
+                                        icon: 2,
+                                        content: response.msg
+                                    });
+                                }
+                            }
+                        });
+                        map.off('mousedown', _onMouseDown);
+                        map.off('mouseup', _onMouseUp);
+                        layer.close(editTaskIndex);
+                        amap.hide();
+                        $('#task-edit-form')[0].reset();
+                        $('#edit-task-area-lnglat').html('任务区域中心店经纬(暂无, 暂无)');
+                        $("input[name='task-center-lng']").val('');
+                        $("input[name='task-center-lat']").val('');
+                        $("#edit-course-title").html('');
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+    });
+    // 编辑任务区域选择
+    $('#edit-task-area-rectangle').click(function () {
+        mouseTool.close(true);
+        layer.min(editTaskIndex);
+        layer.msg('鼠标在地图上拖动即可选择矩形区域', {icon: 6});
+        mouseTool.rectangle();
+        _onMouseDown = function (e) {
+            editTaskRectangleLTLng = e.lnglat.getLng();
+            editTaskRectangleLTLat = e.lnglat.getLat();
+        };
+        map.on('mousedown', _onMouseDown);
+        _onMouseUp = function (e) {
+            editTaskRectangleRBLng = e.lnglat.getLng();
+            editTaskRectangleRBLat = e.lnglat.getLat();
+            $("#edit-task-rectangle-control").show();
+            mouseTool.close(false);
+        };
+        map.on('mouseup', _onMouseUp);
+    });
+    // 编辑任务区域选择OK
+    $('#edit-task-rectangle-ok').click(function () {
+        mouseTool.close(true);
+        map.off('mousedown', _onMouseDown);
+        map.off('mouseup', _onMouseUp);
+        $("#edit-task-rectangle-control").hide();
+        $('#edit-task-area-rectangle').html('重选区域');
+        // southWest:LngLat, northEast:LngLat
+        var taskSWLng = (parseFloat(editTaskRectangleLTLng) - parseFloat(editTaskRectangleRBLng)) > 0.000001 ? editTaskRectangleRBLng : editTaskRectangleLTLng;
+        var taskSWLat = (parseFloat(editTaskRectangleLTLat) - parseFloat(editTaskRectangleRBLat)) > 0.000001 ? editTaskRectangleRBLat : editTaskRectangleLTLat;
+        var taskNELng = (parseFloat(editTaskRectangleLTLng) - parseFloat(editTaskRectangleRBLng)) > 0.000001 ? editTaskRectangleLTLng : editTaskRectangleRBLng;
+        var taskNELat = (parseFloat(editTaskRectangleLTLat) - parseFloat(editTaskRectangleRBLat)) > 0.000001 ? editTaskRectangleLTLat : editTaskRectangleRBLat;
+        var taskCenter = new AMap.Bounds(new AMap.LngLat(taskSWLng, taskSWLat), new AMap.LngLat(taskNELng, taskNELat)).getCenter();
+        var taskCenterLng = taskCenter.getLng();
+        var taskCenterLat = taskCenter.getLat();
+        var taskLngLat = '任务区域中心店经纬(' + taskCenterLng + ', ' + taskCenterLat + ')';
+        $('#edit-task-area-lnglat').html(taskLngLat);
+        $("input[name='task-center-lng']").val(taskCenterLng);
+        $("input[name='task-center-lat']").val(taskCenterLat);
+        layer.restore(editTaskIndex);
+        layer.style(editTaskIndex, {
+            height: 'auto'
+        });
+    });
+    // 编辑任务区域重选
+    $('#edit-task-re-drag').click(function () {
+        iRectangle();
+        $("#edit-task-rectangle-control").hide();
     });
 });

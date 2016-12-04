@@ -12,6 +12,7 @@
  * @property Course_model                  $course_model
  * @property File_model                    $file_model
  * @property Subject_model                 $subject_model
+ * @property Task_model                    $task_model
  *
  * @author wangnan <wangnanphp@163.com>
  * @date   2016-12-01 12:16:50

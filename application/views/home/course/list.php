@@ -27,7 +27,7 @@
       <td>
         <button class="layui-btn layui-btn-mini layui-btn-danger but-course-delete" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
         <button class="layui-btn layui-btn-mini layui-btn-normal edit-course-button" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        <button class="layui-btn layui-btn-mini view-task-button"><i class="layui-icon">&#xe60a;</i>&nbsp;查看任务</button>
+        <button class="layui-btn layui-btn-mini view-task-button" data-course="<?=$course['id']?>" data-title="<?=$course['name']?>"><i class="layui-icon">&#xe60a;</i>&nbsp;查看任务</button>
         <?php if(0 == $course['is_ready']):?>
         <button class="layui-btn layui-btn-mini layui-btn-warm but-course-release" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe609;</i>&nbsp;发布课程</button>
         <?php else:?>
@@ -79,8 +79,8 @@
     <div class="layui-form-item">
       <label class="layui-form-label">封面图</label>
       <div class="layui-input-block">
-        <input type="file" name="cover-image" class="layui-upload-file">
-        <input type="hidden" name="image" value="">
+        <input type="file" name="image" class="layui-upload-file course-image">
+        <input type="hidden" name="course-image" value="">
       </div>
     </div>
     <div class="layui-form-item">
@@ -139,103 +139,41 @@
     <thead><tr>
       <th class="text-center">任务序号</th><th>课程名称</th><th>任务标题</th><th>建立时间</th><th>操作</th>
     </tr></thead>
-    <tbody>
-    <tr>
-      <td class="text-center">1</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>
-        <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-        <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        <button class="layui-btn layui-btn-mini add-topic-button"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button>
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center">1</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>
-        <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-        <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        <button class="layui-btn layui-btn-mini add-topic-button"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button>
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center">1</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>
-        <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-        <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        <button class="layui-btn layui-btn-mini add-topic-button"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button>
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center">1</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>
-        <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-        <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        <button class="layui-btn layui-btn-mini add-topic-button"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button>
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center">1</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>
-        <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-        <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        <button class="layui-btn layui-btn-mini add-topic-button"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button>
-      </td>
-    </tr>
-    <tr>
-      <td class="text-center">1</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>Column content</td>
-      <td>
-        <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-        <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        <button class="layui-btn layui-btn-mini add-topic-button"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button>
-      </td>
-    </tr>
-    </tbody>
+    <tbody id="task-tbody"></tbody>
   </table>
 </div>
 <!-- add task -->
 <div id="add-task-swap">
-  <form class="layui-form">
+  <form class="layui-form" id="task-add-form">
     <!-- add task -->
     <div id="add-task-form">
       <div class="layui-form-item">
         <label class="layui-form-label">所属课程</label>
         <div class="layui-input-block">
-          <div class="layui-input" style="border:none;">课程标题</div>
+          <div class="layui-input" style="border:none;" id="course-title">课程标题</div>
+          <input type="hidden" name="task-course">
         </div>
       </div>
       <div class="layui-form-item">
-        <label class="layui-form-label">区域选择</label>
+        <label class="layui-form-label">任务图</label>
         <div class="layui-input-block">
-          <div id="task-area-lt-lnglat">左上经纬(未选择, 未选择)</div>
-          <div id="task-area-rb-lnglat">右下经纬(未选择, 未选择)</div>
-          <div><button type="button" id="task-area-rectangle" class="layui-btn layui-btn-normal">选择区域</button></div>
-          <input type="hidden" name="task-lt-lng">
-          <input type="hidden" name="task-lt-lat">
-          <input type="hidden" name="task-rb-lng">
-          <input type="hidden" name="taskrb-lat">
+            <input type="file" name="image" lay-type="images" class="layui-upload-file task-image">
+            <input type="hidden" name="task-image">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">任务热点</label>
+        <div class="layui-input-block">
+          <div id="task-area-lnglat">任务区域中心点经纬(未选择, 未选择)</div>
+          <div><button type="button" id="task-area-rectangle" class="layui-btn layui-btn-normal">选择任务区域</button></div>
+          <input type="hidden" name="task-center-lng">
+          <input type="hidden" name="task-center-lat">
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">任务标题</label>
         <div class="layui-input-block">
-          <input type="text" name="" placeholder="请输入任务标题" autocomplete="off" class="layui-input">
+          <input type="text" name="name" placeholder="请输入任务标题" autocomplete="off" class="layui-input">
         </div>
       </div>
       <div class="layui-form-item" style="text-align:center;">
@@ -247,10 +185,58 @@
     </div>
   </form>
 </div>
+<!-- edit task -->
+<div id="edit-task-swap">
+    <form class="layui-form" id="task-edit-form">
+        <!-- add task -->
+        <div id="add-task-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属课程</label>
+                <div class="layui-input-block">
+                    <div class="layui-input" style="border:none;" id="edit-course-title"></div>
+                    <input type="hidden" name="edit-course-task">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">任务图</label>
+                <div class="layui-input-block">
+                    <input type="file" name="image" lay-type="images" class="layui-upload-file edit-task-image">
+                    <input type="hidden" name="edit-task-image">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">任务热点</label>
+                <div class="layui-input-block">
+                    <div id="edit-task-area-lnglat">任务区域中心点经纬(未选择, 未选择)</div>
+                    <div><button type="button" id="edit-task-area-rectangle" class="layui-btn layui-btn-normal">选择任务区域</button></div>
+                    <input type="hidden" name="task-center-lng">
+                    <input type="hidden" name="task-center-lat">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">任务标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="edit-task-name" placeholder="请输入任务标题" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="text-align:center;">
+                <div class="layui-input-block">
+                    <button type="button" id="edit-task-submit-button" class="layui-btn">完成</button>
+                    <button type="button" id="edit-task-cancel-button" class="layui-btn layui-btn-primary">取消</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 <!-- 任务区域选择确认按钮 -->
 <div id="task-rectangle-control">
   <button id="task-rectangle-ok" class="layui-btn">确认选择</button>
   <button id="task-re-drag" class="layui-btn layui-btn-primary">重新拖选</button>
+</div>
+<!-- 编辑任务区域选择确认按钮 -->
+<div id="edit-task-rectangle-control">
+    <button id="edit-task-rectangle-ok" class="layui-btn">确认选择</button>
+    <button id="edit-task-re-drag" class="layui-btn layui-btn-primary">重新拖选</button>
 </div>
 <!-- 题目列表 -->
 <div id="topic-list-swap">
@@ -266,66 +252,16 @@
         <th class="text-center">题目序号</th><th>所属任务名称</th><th>题目类型</th><th>建立时间</th><th>操作</th>
       </tr></thead>
       <tbody>
-      <tr>
-        <td class="text-center">1</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>
-          <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-          <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center">1</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>
-          <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-          <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center">1</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>
-          <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-          <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center">1</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>
-          <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-          <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center">1</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>
-          <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-          <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center">1</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>
-          <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
-          <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-        </td>
-      </tr>
+          <tr>
+            <td class="text-center">1</td>
+            <td>Column content</td>
+            <td>Column content</td>
+            <td>Column content</td>
+            <td>
+              <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
+              <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
+            </td>
+          </tr>
       </tbody>
     </table>
   </div>

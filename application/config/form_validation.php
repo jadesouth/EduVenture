@@ -29,7 +29,6 @@ $config = [
         ['field' => 'grade', 'label' => '年级', 'rules' => 'trim|required'],
         ['field' => 'subject', 'label' => '年级', 'rules' => 'trim|required'],
     ],
-    // course 课程相关
     'course/modify' => [ // 编辑课程
         ['field' => 'course', 'label' => '选择课程', 'rules' => 'trim|required'],
         ['field' => 'name', 'label' => '课程名', 'rules' => 'trim|required'],
@@ -42,5 +41,18 @@ $config = [
         ['field' => 'rb-lng', 'label' => '左下角坐标', 'rules' => 'trim|required|decimal'],
         ['field' => 'grade', 'label' => '年级', 'rules' => 'trim|required'],
         ['field' => 'subject', 'label' => '年级', 'rules' => 'trim|required'],
+    ],
+    // course 任务相关
+    'task/create' => [ // 创建任务
+        ['field' => 'task-course', 'label' => '课程', 'rules' => 'trim|required'],
+        ['field' => 'name', 'label' => '任务标题', 'rules' => 'trim|required'],
+        ['field' => 'task-image', 'label' => '任务封面图', 'rules' => 'trim|required'],
+        ['field' => 'task-center-lng', 'label' => '任务区域', 'rules' => 'trim|required|decimal'],
+    ],
+    'task/modify' => [ // 编辑任务
+        ['field' => 'edit-course-task', 'label' => '任务', 'rules' => 'trim|required'],
+        ['field' => 'edit-task-name', 'label' => '任务标题', 'rules' => 'trim|required'],
+        ['field' => 'edit-task-image', 'label' => '任务封面图', 'rules' => 'trim|required'],
+        ['field' => 'task-center-lng', 'label' => '任务区域', 'rules' => 'trim|required|decimal'],
     ],
 ];
