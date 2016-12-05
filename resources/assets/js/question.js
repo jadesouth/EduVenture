@@ -1,7 +1,15 @@
-var singleIndex;
+var singleIndex, multiIndex, photoIndex, qaIndex;
 var singleItemNum = 2;
+var multiItemNum = 2;
 var taskId = 0, taskName = '';
 $(function() {
+    // 返回任务列表
+    $("#return-task-button").click(function() {
+        taskName = '';
+        taskId = 0;
+        $("#topic-list-swap").hide();
+        $("#task-list-swap").show();
+    });
     var question_tbody = $("#question-tbody");
     // 删除问题数据
     question_tbody.on("click", ".but-question-del", function() {
@@ -36,9 +44,13 @@ $(function() {
             }
         });
     });
-    // 删除题目选项(单选和多选)
-    question_tbody.on("click", ".but-del-option", function() {
-        $(this).parent().parent().parent().remove();
+    /* 单选题 */
+    // 删除单选题目选项
+    $("#single-form").on("click", ".but-del-option", function() {
+        var parent = $(this).parent().parent().parent();
+        parent.hide();
+        parent.find("input[name='right']").attr("checked", false);
+        parent.find("input[name='answer[]']").val('');
     });
     // 填充问题列表
     var questionTbodyFill = function(task) {
@@ -59,11 +71,11 @@ $(function() {
                             var tr = "";
                             tr += '<tr><td class="text-center">' + question[i].id +'</td>';
                             tr += '<td>' + taskName + '</td>';
-                            tr += '<td>' + question[i].name + '</td>';
+                            tr += '<td>' + question[i].kind + '</td>';
                             tr += '<td>' + question[i].date_created + '</td>';
                             tr += '<td><button class="layui-btn layui-btn-mini layui-btn-danger but-question-del" data-question="';
                             tr += question[i].id + '"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>';
-                            tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-question-edit" data-question="';
+                            tr += '<button style="display:none;" class="layui-btn layui-btn-mini layui-btn-normal but-question-edit" data-question="';
                             tr += question[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button></td></tr>';
                             question_tbody.prepend(tr);
                         }
@@ -155,9 +167,8 @@ $(function() {
             }
         });
     });
-
-
-
+    // 编辑单选问题获取数据  // TODO
+    /* 多选题 */
     // 点击添加多选
     $("#add-multi-button").click(function() {
         multiIndex = layer.open({
@@ -169,27 +180,64 @@ $(function() {
             , shade: 0
             , moveType: 1
             , content: $("#multi-swap")
-            , cancel: function () {
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
-            }
+            , cancel: cancelMulti
         });
+        $("input[name='question-task']").val(taskId);
     });
     // 点击添加一项多
     $("#add-multi-item-button").click(function() {
         multiItemNum++;
         var item = '<div class="layui-form-item"><div class="layui-inline" style="margin-right:0"><label class="layui-form-label">选项' + multiItemNum +
-            '</label><div class="layui-input-inline" style="width:auto;"><input type="checkbox" name="sex" title="选为正答">' +
+            '</label><div class="layui-input-inline" style="width:auto;"><input type="checkbox" name="right[]" value="'+ multiItemNum +'" title="选为正答">' +
             '<div class="layui-unselect layui-form-checkbox"><span>选为正答</span><i class="layui-icon"></i></div></div>' +
             '<div class="layui-input-inline" style="width:220px;">' +
-            '<input type="text" name="price_max" placeholder="输入选项答案" autocomplete="off" class="layui-input"></div>' +
+            '<input type="text" name="answer[]" placeholder="输入选项答案" autocomplete="off" class="layui-input"></div>' +
             '<div class="layui-input-inline del-item" style="width:auto;line-height:30px;">' +
-            '<button type="button" class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#x1006;</i></button></div></div></div>';
+            '<button type="button" class="layui-btn layui-btn-mini layui-btn-danger but-del-option"><i class="layui-icon">&#x1006;</i></button></div></div></div>';
         $("#add-multi-swap").append(item);
+        layui.form().render();
     });
+    // 删除多选题目选项
+    $("#multi-form").on("click", ".but-del-option", function() {
+        var parent = $(this).parent().parent().parent();
+        parent.hide();
+        parent.find("input[name='right[]']").attr("checked", false);
+        parent.find("input[name='answer[]']").val('');
+    });
+    // 多选添加取消回调方法
+    var cancelMulti = function() {
+        $("#multi-form")[0].reset();
+        layer.close(multiIndex);
+    };
+    // 取消添加单选
+    $("#cancel-multi").click(cancelMulti);
+    // 添加多选题数据
+    $("#add-multi-data").click(function() {
+        $.ajax({
+            type: 'POST'
+            ,url: '/question/createMultipleSelect'
+            ,data: $('#multi-form').serialize()
+            ,dataType: 'JSON'
+            ,success: function (response) {
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        questionTbodyFill();
+                        layer.close(multiIndex);
+                        $('#multi-form')[0].reset();
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
+        });
+    });
+    /* 拍照题 */
     // 点击添加拍照题
     $("#add-photo-button").click(function() {
         photoIndex = layer.open({
@@ -202,14 +250,44 @@ $(function() {
             , moveType: 1
             , content: $("#photo-swap")
             , cancel: function () {
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
+                $("#photo-form")[0].reset();
+                layer.close(photoIndex);
+            }
+        });
+        $("input[name='question-task']").val(taskId);
+    });
+    // 取消按钮
+    $("#cancel-photo").click(function() {
+        $("#photo-form")[0].reset();
+        layer.close(photoIndex);
+    });
+    // 添加拍照题数据
+    $("#add-photo-data").click(function() {
+        $.ajax({
+            type: 'POST'
+            ,url: '/question/createPhoto'
+            ,data: $('#photo-form').serialize()
+            ,dataType: 'JSON'
+            ,success: function (response) {
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        questionTbodyFill();
+                        layer.close(photoIndex);
+                        $('#photo-form')[0].reset();
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
             }
         });
     });
+    /* 问答题 */
     // 点击添加问答题
     $("#add-qa-button").click(function() {
         qaIndex = layer.open({
@@ -222,11 +300,40 @@ $(function() {
             , moveType: 1
             , content: $("#qa-swap")
             , cancel: function () {
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
+                $("#qa-form")[0].reset();
+                layer.close(qaIndex);
+            }
+        });
+        $("input[name='question-task']").val(taskId);
+    });
+    // 取消按钮
+    $("#cancel-qa").click(function() {
+        $("#qa-form")[0].reset();
+        layer.close(qaIndex);
+    });
+    // 添加问答题数据
+    $("#add-qa-data").click(function() {
+        $.ajax({
+            type: 'POST'
+            ,url: '/question/createQA'
+            ,data: $('#qa-form').serialize()
+            ,dataType: 'JSON'
+            ,success: function (response) {
+                if(0 == response.status) {
+                    layer.msg(response.msg, {
+                        icon: 6,
+                        time: 1000
+                    }, function(){
+                        questionTbodyFill();
+                        layer.close(qaIndex);
+                        $('#qa-form')[0].reset();
+                    });
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
             }
         });
     });

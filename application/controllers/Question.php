@@ -9,6 +9,15 @@
 class Question extends Home_Controller
 {
     /**
+     * @var array 题目类型
+     */
+    private $_questionType = [
+        1 => '单选题',
+        2 => '多选题',
+        3 => '拍照题',
+        4 => '问答题',
+    ];
+    /**
      * listing 任务列表
      *
      * @param int $page 分页
@@ -32,6 +41,11 @@ class Question extends Home_Controller
             $view_var['page'] = $this->pagination->create_links();
             // content
             $view_var['question_list'] = $this->question_model->getPageData($task_id, $page);
+            if(! empty($view_var['question_list'])) {
+                foreach ($view_var['question_list'] as &$item) {
+                    $item['kind'] = $this->_questionType[$item['kind']];
+                }
+            }
         }
 
         http_ajax_response(0, '获取题目数据成功!', $view_var);
@@ -41,7 +55,6 @@ class Question extends Home_Controller
      * createSingleSelect 创建单选题
      *
      * @return bool
-     *
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-05 10:51:31
      */
@@ -58,11 +71,26 @@ class Question extends Home_Controller
             $right = $this->input->post('right');
             $answer = $this->input->post('answer');
             $hotspot_id = $this->input->post('question-task');
+            $is_right = $right - 1;
+            if (empty($answer[$is_right])) {
+                http_ajax_response(2, '请填写正答选项答案');
+                return false;
+            }
             foreach ($answer as $key => $value) {
-                $question[] = [
-                    'opt' => $value,
-                    'is_right' => ($right - 1) == $key ? 1 : 0,
-                ];
+                if(! empty($value)) {
+                    $question[] = [
+                        'opt'      => $value,
+                        'is_right' => $is_right == $key ? 1 : 0,
+                    ];
+                }
+            }
+            if (empty($question)) {
+                http_ajax_response(2, '请填写选项内容');
+                return false;
+            }
+            if ( 2 > count($question)) {
+                http_ajax_response(2, '至少需要输入两个选项');
+                return false;
             }
 
             $insert_id = $this->create($name, 1, $hotspot_id, $question);
@@ -79,19 +107,131 @@ class Question extends Home_Controller
         }
     }
 
+    /**
+     * createMultipleSelect 创建多选题
+     *
+     * @return bool
+     * @author wangnan <wangnanphp@163.com>
+     * @date   2016-12-05 22:46:53
+     */
     public function createMultipleSelect()
     {
+        if ('post' == $this->input->method()) {
+            $this->load->library('form_validation');
+            if (false === $this->form_validation->run()) {
+                http_ajax_response(1, $this->form_validation->error_string());
+                return false;
+            }
 
+            $name = $this->input->post('name');
+            $right = $this->input->post('right');
+            $answer = $this->input->post('answer');
+            $hotspot_id = $this->input->post('question-task');
+            if (empty($right)) {
+                http_ajax_response(2, '请勾选正答');
+                return false;
+            }
+            foreach ($answer as $key => $value) {
+                $is_right = $key + 1;
+                if(! empty($value)) {
+                    $question[] = [
+                        'opt'      => $value,
+                        'is_right' => in_array($is_right, $right) ? 1 : 0,
+                    ];
+                } else {
+                    if(in_array($is_right, $right)) {
+                        $no_right_answer = true;
+                    }
+                }
+            }
+            if (empty($question) || ! empty($no_right_answer)) {
+                http_ajax_response(2, '请填写答案');
+                return false;
+            }
+            if ( 2 > count($question)) {
+                http_ajax_response(2, '至少需要输入两个选项');
+                return false;
+            }
+            $insert_id = $this->create($name, 2, $hotspot_id, $question);
+            if (0 >= $insert_id) {
+                http_ajax_response(-1, '添加题目失败,请稍后再试!');
+                return false;
+            }
+
+            http_ajax_response(0, '添加题目成功!');
+            return true;
+        } else {
+            http_ajax_response(2, '非法请求!');
+            return true;
+        }
     }
 
-    public function createPicture()
+    /**
+     * createPhoto 创建拍照题
+     *
+     * @return bool
+     * @author wangnan <wangnanphp@163.com>
+     * @date   2016-12-05 23:53:46
+     */
+    public function createPhoto()
     {
+        if ('post' == $this->input->method()) {
+            $this->load->library('form_validation');
+            if (false === $this->form_validation->run()) {
+                http_ajax_response(1, $this->form_validation->error_string());
+                return false;
+            }
 
+            $name = $this->input->post('name');
+            $num = (int)$this->input->post('num');
+            $hotspot_id = $this->input->post('question-task');
+            $question['num'] = $num;
+            $insert_id = $this->create($name, 3, $hotspot_id, $question);
+            if (0 >= $insert_id) {
+                http_ajax_response(-1, '添加题目失败,请稍后再试!');
+                return false;
+            }
+
+            http_ajax_response(0, '添加题目成功!');
+            return true;
+        } else {
+            http_ajax_response(2, '非法请求!');
+            return true;
+        }
     }
 
+    /**
+     * createQA 创建问答题
+     *
+     * @return bool
+     * @author wangnan <wangnanphp@163.com>
+     * @date   2016-12-06 00:04:09
+     */
     public function createQA()
     {
+        if ('post' == $this->input->method()) {
+            $this->load->library('form_validation');
+            if (false === $this->form_validation->run()) {
+                http_ajax_response(1, $this->form_validation->error_string());
+                return false;
+            }
 
+            $name = $this->input->post('name');
+            $content = (string)$this->input->post('qa');
+            $hotspot_id = $this->input->post('question-task');
+            $question['content'] = $content;
+            $insert_id = $this->create($name, 4, $hotspot_id, $question);
+            if (0 >= $insert_id) {
+                http_ajax_response(-1, '添加题目失败,请稍后再试!');
+                return false;
+            }
+
+            http_ajax_response(0, '添加题目成功!');
+            return true;
+        } else {
+            http_ajax_response(2, '非法请求!');
+            return true;
+        }
     }
 
     /**
@@ -101,8 +241,8 @@ class Question extends Home_Controller
      * @param $type
      * @param $hotspot_id
      * @param $question
-     * @return int
      *
+     * @return int
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-05 11:09:18
      */
@@ -112,22 +252,20 @@ class Question extends Home_Controller
         $type = (int)$type;
         $hotspot_id = (int)$hotspot_id;
         $question = (array)$question;
-        if (empty($name) || ! in_array($type,
-                [1, 2, 3, 4]) || 0 >= $hotspot_id || empty($question) || ! is_array($question)
-        ) {
+        if ((empty($name) && $type != 4) || ! in_array($type, [1, 2, 3, 4]) || 0 >= $hotspot_id || empty($question) || ! is_array($question)) {
             return 0;
         }
         // 获取当前任务的课程ID
         $this->load->model('task_model');
         $task_info = $this->task_model->getTask($hotspot_id, 'id,epack_id');
         $course_id = empty($task_info['epack_id']) ? 0 : (int)$task_info['epack_id'];
-        if(0 >= $course_id) {
+        if (0 >= $course_id) {
             return 0;
         }
         // 问题内容
         $content = [
-            'title' => $name,
-            'type' => $type, // 1:单选,2:多选,3:拍照,4:问答
+            'title'    => $name,
+            'type'     => $type, // 1:单选,2:多选,3:拍照,4:问答
             'question' => $question,
         ];
         $content = json_encode($content, JSON_UNESCAPED_UNICODE);
@@ -148,7 +286,6 @@ class Question extends Home_Controller
      * delete 删除题目数据
      *
      * @return bool
-     *
      * @author wangnan <wangnanphp@163.com>
      * @date   2016-12-05 11:11:03
      */
@@ -158,6 +295,7 @@ class Question extends Home_Controller
             $id = (int)$this->input->post('question');
             if (0 >= $id) {
                 http_ajax_response(1, '请求参数有误!');
+
                 return false;
             }
             // 删除数据
@@ -165,13 +303,16 @@ class Question extends Home_Controller
             $res = $this->question_model->delById($id);
             if (false === $res) {
                 http_ajax_response(-1, '删除问题失败!');
+
                 return false;
             } else {
                 http_ajax_response(0, '成功删除问题!');
+
                 return true;
             }
         } else {
             http_ajax_response(2, '非法请求!');
+
             return false;
         }
     }

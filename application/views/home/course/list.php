@@ -242,6 +242,7 @@
 <!-- 题目列表 -->
 <div id="topic-list-swap">
   <div id="topic-type-select-swap">
+    <button id="return-task-button" class="layui-btn layui-btn layui-btn-primary">返回任务</button>
     <button id="add-single-button" class="layui-btn layui-btn-big">添加单选题</button>
     <button id="add-multi-button" class="layui-btn layui-btn-big">添加多选题</button>
     <button id="add-photo-button" class="layui-btn layui-btn-big">添加拍照题</button>
@@ -314,11 +315,12 @@
 </div>
 <!-- 多选 -->
 <div id="multi-swap">
-  <form class="layui-form">
+  <form class="layui-form" id="multi-form">
     <div class="layui-form-item">
       <label class="layui-form-label">问题</label>
       <div class="layui-input-block">
-        <input type="text" name="" placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+        <input type="text" name="name" placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+        <input type="hidden" name="question-task">
       </div>
     </div>
     <div id="add-multi-swap">
@@ -326,10 +328,10 @@
         <div class="layui-inline" style="margin-right:0">
           <label class="layui-form-label">选项1</label>
           <div class="layui-input-inline" style="width:auto;">
-            <input type="checkbox" name="sex" title="选为正答">
+            <input type="checkbox" name="right[]" value="1" title="选为正答">
           </div>
           <div class="layui-input-inline" style="width:220px;">
-            <input type="text" name="price_max" placeholder="输入选项答案" autocomplete="off" class="layui-input">
+            <input type="text" name="answer[]" placeholder="输入选项答案" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -337,10 +339,10 @@
         <div class="layui-inline">
           <label class="layui-form-label">选项2</label>
           <div class="layui-input-inline" style="width:auto;">
-            <input type="checkbox" name="sex" title="选为正答">
+            <input type="checkbox" name="right[]" value="2" title="选为正答">
           </div>
           <div class="layui-input-inline" style="width:220px;">
-            <input type="text" name="price_max" placeholder="输入选项答案" autocomplete="off" class="layui-input">
+            <input type="text" name="answer[]" placeholder="输入选项答案" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -352,27 +354,28 @@
     </div>
     <div class="layui-form-item" style="text-align:center;">
       <div class="layui-input-block">
-        <button type="button" class="layui-btn">完成</button>
-        <button type="button" class="layui-btn layui-btn-primary">取消</button>
+        <button type="button" class="layui-btn" id="add-multi-data">完成</button>
+        <button type="button" class="layui-btn layui-btn-primary" id="cancel-multi">取消</button>
       </div>
     </div>
   </form>
 </div>
 <!-- 拍照 -->
 <div id="photo-swap">
-  <form class="layui-form">
+  <form class="layui-form" id="photo-form">
     <div class="layui-form-item">
       <label class="layui-form-label" style="width:120px;">问题</label>
       <div class="layui-input-block" style="margin-left:130px;">
-        <input type="text" name="" placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+        <input type="text" name="name" placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+        <input type="hidden" name="question-task">
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label" style="width:120px;">上传图片数量</label>
       <div class="layui-input-block" style="margin-left:130px;">
-        <select name="interest">
+        <select name="num">
           <option value="1">上传1张</option>
-          <option value="2">上传1张</option>
+          <option value="2">上传2张</option>
           <option value="3" selected>上传3张</option>
           <option value="4">上传4张</option>
           <option value="5">上传5张</option>
@@ -382,25 +385,26 @@
     </div>
     <div class="layui-form-item" style="text-align:center;">
       <div class="layui-input-block">
-        <button type="button" class="layui-btn close-msg">完成</button>
-        <button type="button" class="layui-btn layui-btn-primary close-msg">取消</button>
+        <button type="button" class="layui-btn" id="add-photo-data">完成</button>
+        <button type="button" class="layui-btn layui-btn-primary" id="cancel-photo">取消</button>
       </div>
     </div>
   </form>
 </div>
 <!-- 问答 -->
 <div id="qa-swap">
-  <form class="layui-form">
+  <form class="layui-form" id="qa-form">
     <div class="layui-form-item">
       <label class="layui-form-label">问题</label>
       <div class="layui-input-block">
-        <textarea name="" required lay-verify="required" placeholder="请输入问题内容" class="layui-textarea"></textarea>
+        <textarea name="qa" required lay-verify="required" placeholder="请输入问题内容" class="layui-textarea"></textarea>
+        <input type="hidden" name="question-task">
       </div>
     </div>
     <div class="layui-form-item" style="text-align:center;">
       <div class="layui-input-block">
-        <button type="button" class="layui-btn close-msg">完成</button>
-        <button type="button" class="layui-btn layui-btn-primary close-msg">取消</button>
+        <button type="button" class="layui-btn" id="add-qa-data">完成</button>
+        <button type="button" class="layui-btn layui-btn-primary" id="cancel-qa">取消</button>
       </div>
     </div>
   </form>

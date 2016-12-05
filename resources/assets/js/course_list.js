@@ -1,14 +1,13 @@
 /**
  * Created by wangnan on 16-10-27.
  */
-var editCourseIndex, addTaskIndex, editTaskIndex,multiIndex, photoIndex, qaIndex;
+var editCourseIndex, addTaskIndex, editTaskIndex;
 var viewCourseSwap, editCourseSwap, taskListSwap, addTaskSwap, editTaskSwap;
 var editTaskRectangleLTLng, editTaskRectangleLTLat, editTaskRectangleRBLng, editTaskRectangleRBLat;
 var amap,search;
 var _onMouseDown, _onMouseUp;
 var mouseTool;
 var viewTaskButton, addTaskButton, taskCancelButton, addTaskSubmitButton;
-var multiItemNum = 2;
 var courseID = 0;
 var courseName = '';
 var map = new AMap.Map('amap', {
@@ -452,9 +451,9 @@ $(function() {
         $("#task-rectangle-control").hide();
     });
     // 临时关闭
-    $('.close-msg').click(function() {
-        layer.closeAll();
-    });
+    //$('.close-msg').click(function() {
+    //    layer.closeAll();
+    //});
     $('.del-item').delegate('button', 'click', function() {
         $(this).parent().parent().remove();
     });

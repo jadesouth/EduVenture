@@ -50,7 +50,7 @@ class Question_model extends MY_Model
         $limit = 0 >= $page_size ? 20 : $page_size;
         $offset = 0 > $page ? 0 : ($page - 1) * $page_size;
         // select
-        $fields = 'id,name,date_created';
+        $fields = 'id,kind,date_created';
         return $this->db->select($fields)
             ->from('component')
             ->where('hotspot_id', $task_id)
