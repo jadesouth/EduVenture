@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-  <title>首页</title>
+  <title>Edu Venture</title>
   <link rel="stylesheet" href="/resources/assets/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/resources/assets/css/ee3.css">
   <link rel="stylesheet" href="/resources/assets/layui/css/layui.css">

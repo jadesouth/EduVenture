@@ -1,14 +1,13 @@
 /**
  * Created by wangnan on 16-10-27.
  */
-var editCourseIndex, addTaskIndex, editTaskIndex,singleIndex, multiIndex, photoIndex, qaIndex;
+var editCourseIndex, addTaskIndex, editTaskIndex,multiIndex, photoIndex, qaIndex;
 var viewCourseSwap, editCourseSwap, taskListSwap, addTaskSwap, editTaskSwap;
 var editTaskRectangleLTLng, editTaskRectangleLTLat, editTaskRectangleRBLng, editTaskRectangleRBLat;
 var amap,search;
 var _onMouseDown, _onMouseUp;
 var mouseTool;
 var viewTaskButton, addTaskButton, taskCancelButton, addTaskSubmitButton;
-var singleItemNum = 2;
 var multiItemNum = 2;
 var courseID = 0;
 var courseName = '';
@@ -205,7 +204,7 @@ $(function() {
         $('#area-rb-lnglat').html('');
         $("#rectangle-control").hide();
     });
-    // 点击区域选择选择区域
+    // 点击课程选择选择区域
     $('#area-rectangle').click(function () {
         mouseTool.close(true);
         layer.min(editCourseIndex);
@@ -283,8 +282,8 @@ $(function() {
                             tr += task[i].id + '"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>';
                             tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-task-edit" data-task="';
                             tr += task[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>';
-                            tr += '<button class="layui-btn layui-btn-mini add-topic-button" data-task="';
-                            tr += task[i].id + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
+                            tr += '<button class="layui-btn layui-btn-mini but-question-add" data-task="';
+                            tr += task[i].id + '" data-task-name="' + task[i].task_name + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
                             task_tbody.prepend(tr);
                         }
                     }
@@ -373,7 +372,7 @@ $(function() {
                                             tr += task[i].id + '"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>';
                                             tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-task-edit" data-task="';
                                             tr += task[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>';
-                                            tr += '<button class="layui-btn layui-btn-mini add-topic-button" data-task="';
+                                            tr += '<button class="layui-btn layui-btn-mini but-question-add" data-task="';
                                             tr += task[i].id + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
                                             task_tbody.prepend(tr);
                                         }
@@ -452,116 +451,6 @@ $(function() {
         iRectangle();
         $("#task-rectangle-control").hide();
     });
-    // 点击添加题目按钮
-    $(".add-topic-button").click(function() {
-        $("#topic-list-swap").show();
-        taskListSwap.hide();
-    });
-    // 点击添加单选题
-    $("#add-single-button").click(function() {
-        singleIndex = layer.open({
-            type: 1
-            , title: ['添加单选题', 'font-weight:bold;']
-            , offset: ['10px', '10px']
-            , area: ['510px', 'auto']
-            , maxmin: true
-            , shade: 0
-            , moveType: 1
-            , content: $("#single-swap")
-            , cancel: function () {
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
-            }
-        });
-    });
-    // 点击添加一项单选
-    $("#add-single-item-button").click(function() {
-        singleItemNum++;
-        var item = '<div class="layui-form-item"><div class="layui-inline" style="margin-right:0"><label class="layui-form-label">选项' + singleItemNum +
-            '</label><div class="layui-input-inline" style="width:auto;"><input type="radio" name="sex" title="选为正答">' +
-            '<div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><span>选为正答</span></div></div>' +
-            '<div class="layui-input-inline" style="width:220px;">' +
-            '<input type="text" name="price_max" placeholder="输入选项答案" autocomplete="off" class="layui-input"></div>' +
-            '<div class="layui-input-inline del-item" style="width:auto;line-height:30px;">' +
-            '<button type="button" class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#x1006;</i></button></div></div></div>';
-        $("#add-single-swap").append(item);
-    });
-    // 点击添加多选
-    $("#add-multi-button").click(function() {
-        multiIndex = layer.open({
-            type: 1
-            , title: ['添加多选题', 'font-weight:bold;']
-            , offset: ['10px', '10px']
-            , area: ['526x', 'auto']
-            , maxmin: true
-            , shade: 0
-            , moveType: 1
-            , content: $("#multi-swap")
-            , cancel: function () {
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
-            }
-        });
-    });
-    // 点击添加一项多
-    $("#add-multi-item-button").click(function() {
-        multiItemNum++;
-        var item = '<div class="layui-form-item"><div class="layui-inline" style="margin-right:0"><label class="layui-form-label">选项' + multiItemNum +
-            '</label><div class="layui-input-inline" style="width:auto;"><input type="checkbox" name="sex" title="选为正答">' +
-            '<div class="layui-unselect layui-form-checkbox"><span>选为正答</span><i class="layui-icon"></i></div></div>' +
-            '<div class="layui-input-inline" style="width:220px;">' +
-            '<input type="text" name="price_max" placeholder="输入选项答案" autocomplete="off" class="layui-input"></div>' +
-            '<div class="layui-input-inline del-item" style="width:auto;line-height:30px;">' +
-            '<button type="button" class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#x1006;</i></button></div></div></div>';
-        $("#add-multi-swap").append(item);
-    });
-    // 点击添加拍照题
-    $("#add-photo-button").click(function() {
-        photoIndex = layer.open({
-            type: 1
-            , title: ['添加拍照题', 'font-weight:bold;']
-            , offset: ['10px', '10px']
-            , area: ['500px', 'auto']
-            , maxmin: true
-            , shade: 0
-            , moveType: 1
-            , content: $("#photo-swap")
-            , cancel: function () {
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
-            }
-        });
-    });
-    // 点击添加问答题
-    $("#add-qa-button").click(function() {
-        qaIndex = layer.open({
-            type: 1
-            , title: ['添加问答题', 'font-weight:bold;']
-            , offset: ['10px', '10px']
-            , area: ['500px', 'auto']
-            , maxmin: true
-            , shade: 0
-            , moveType: 1
-            , content: $("#qa-swap")
-            , cancel: function () {
-                //$("#create-course-li").removeClass('active');
-                //$('#create-form')[0].reset();
-                //$('#area-lt-lnglat').html('');
-                //$('#area-rb-lnglat').html('');
-                //$('#area-rectangle').html('选择区域');
-            }
-        });
-    });
-
     // 临时关闭
     $('.close-msg').click(function() {
         layer.closeAll();
@@ -728,7 +617,7 @@ $(function() {
                                             tr += task[i].id + '"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>';
                                             tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-task-edit" data-task="';
                                             tr += task[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>';
-                                            tr += '<button class="layui-btn layui-btn-mini add-topic-button" data-task="';
+                                            tr += '<button class="layui-btn layui-btn-mini but-question-add" data-task="';
                                             tr += task[i].id + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
                                             task_tbody.prepend(tr);
                                         }

@@ -55,4 +55,11 @@ $config = [
         ['field' => 'edit-task-image', 'label' => '任务封面图', 'rules' => 'trim|required'],
         ['field' => 'task-center-lng', 'label' => '任务区域', 'rules' => 'trim|required|decimal'],
     ],
+    // question 题目相关
+    'question/createSingleSelect' => [ // 添加单选
+        ['field' => 'name', 'label' => '问题标题', 'rules' => 'trim|required'],
+        ['field' => 'right', 'label' => '正答', 'rules' => 'trim|required|is_natural_no_zero'],
+        ['field' => 'question-task', 'label' => '任务', 'rules' => 'trim|required|is_natural_no_zero'],
+        ['field' => 'answer[]', 'label' => '题目内容', 'rules' => 'trim|required'],
+    ],
 ];

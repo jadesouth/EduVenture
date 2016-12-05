@@ -11,6 +11,7 @@
  *
  * @property Course_model                  $course_model
  * @property File_model                    $file_model
+ * @property Question_model                $question_model
  * @property Subject_model                 $subject_model
  * @property Task_model                    $task_model
  *

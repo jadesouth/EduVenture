@@ -51,6 +51,7 @@
 <script src="/resources/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/resources/assets/layui/layui.js"></script>
 <script src="/resources/assets/js/course_list.js"></script>
+<script src="/resources/assets/js/question.js"></script>
 <!-- edit course -->
 <div class="layui-form" id="edit-course-swap" style="display:none;">
   <form id="modify-course-form">
@@ -251,28 +252,27 @@
       <thead><tr>
         <th class="text-center">题目序号</th><th>所属任务名称</th><th>题目类型</th><th>建立时间</th><th>操作</th>
       </tr></thead>
-      <tbody>
-          <tr>
-            <td class="text-center">1</td>
-            <td>Column content</td>
-            <td>Column content</td>
-            <td>Column content</td>
-            <td>
+      <tbody id="question-tbody"><tr>
+          <td class="text-center">1</td>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>Column content</td>
+          <td>
               <button class="layui-btn layui-btn-mini layui-btn-danger"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>
               <button class="layui-btn layui-btn-mini layui-btn-normal edit-task-button"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>
-            </td>
-          </tr>
-      </tbody>
+          </td>
+      </tr></tbody>
     </table>
   </div>
 </div>
 <!-- 单选 -->
 <div id="single-swap">
-  <form class="layui-form">
+  <form class="layui-form" id="single-form">
     <div class="layui-form-item">
       <label class="layui-form-label">问题</label>
       <div class="layui-input-block">
-        <input type="text" name="" placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+        <input type="text" name="name" placeholder="请输入问题内容" autocomplete="off" class="layui-input">
+        <input type="hidden" name="question-task">
       </div>
     </div>
     <div id="add-single-swap">
@@ -280,10 +280,10 @@
         <div class="layui-inline" style="margin-right:0">
           <label class="layui-form-label">选项1</label>
           <div class="layui-input-inline" style="width:auto;">
-            <input type="radio" name="sex" title="选为正答">
+            <input type="radio" value="1" name="right" title="选为正答">
           </div>
           <div class="layui-input-inline" style="width:220px;">
-            <input type="text" name="price_max" placeholder="输入选项答案" autocomplete="off" class="layui-input">
+            <input type="text" name="answer[]" placeholder="输入选项答案" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -291,10 +291,10 @@
         <div class="layui-inline">
           <label class="layui-form-label">选项2</label>
           <div class="layui-input-inline" style="width:auto;">
-            <input type="radio" name="sex" title="选为正答">
+            <input type="radio" value="2" name="right" title="选为正答">
           </div>
           <div class="layui-input-inline" style="width:220px;">
-            <input type="text" name="price_max" placeholder="输入选项答案" autocomplete="off" class="layui-input">
+            <input type="text" name="answer[]" placeholder="输入选项答案" autocomplete="off" class="layui-input">
           </div>
         </div>
       </div>
@@ -306,8 +306,8 @@
     </div>
     <div class="layui-form-item" style="text-align:center;">
       <div class="layui-input-block">
-        <button type="button" class="layui-btn">完成</button>
-        <button type="button" class="layui-btn layui-btn-primary">取消</button>
+        <button type="button" class="layui-btn" id="add-single-data">完成</button>
+        <button type="button" class="layui-btn layui-btn-primary" id="cancel-single">取消</button>
       </div>
     </div>
   </form>
@@ -406,6 +406,7 @@
   </form>
 </div>
 <script>
+$(function() {
     // 删除课程
     $(".but-course-delete").click(function() {
         var course = $(this).attr('data-course');
@@ -470,6 +471,7 @@
             }
         });
     });
+});
 </script>
 </body>
 </html>
