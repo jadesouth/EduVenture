@@ -60,6 +60,18 @@ $config = [
         ['field' => 'name', 'label' => '问题标题', 'rules' => 'trim|required'],
         ['field' => 'right', 'label' => '正答', 'rules' => 'trim|required|is_natural_no_zero'],
         ['field' => 'question-task', 'label' => '任务', 'rules' => 'trim|required|is_natural_no_zero'],
-        ['field' => 'answer[]', 'label' => '题目内容', 'rules' => 'trim|required'],
+    ],
+    'question/createMultipleSelect' => [ // 添加多选题
+        ['field' => 'name', 'label' => '问题标题', 'rules' => 'trim|required'],
+        ['field' => 'question-task', 'label' => '任务', 'rules' => 'trim|required|is_natural_no_zero'],
+    ],
+    'question/createPhoto' => [ // 添加拍照题
+        ['field' => 'name', 'label' => '问题标题', 'rules' => 'trim|required'],
+        ['field' => 'num', 'label' => '图片数量', 'rules' => 'trim|required|is_natural_no_zero'],
+        ['field' => 'question-task', 'label' => '任务', 'rules' => 'trim|required|is_natural_no_zero'],
+    ],
+    'question/createQA' => [ // 添加问答题
+        ['field' => 'qa', 'label' => '问题内容', 'rules' => 'trim|required'],
+        ['field' => 'question-task', 'label' => '任务', 'rules' => 'trim|required|is_natural_no_zero'],
     ],
 ];
