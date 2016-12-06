@@ -43,7 +43,7 @@ class Upload extends MY_Controller
         // init upload
         $this->upload->initialize($this->_config);
         // upload
-        if (true === $this->upload->do_upload('image')) { // success
+        if (true === $this->upload->do_upload('cover-image')) { // success
             // 获取上传图片的信息
             $upload_file = $this->upload->data();
             $file_path = 'course_cover/' . $folder_data . '/' . $upload_file['orig_name'];
