@@ -21,8 +21,8 @@
     <tr>
       <td class="text-center"><?=$course['id']?></td>
       <td><?=$course['name']?></td>
-      <td><?=$course['grade_id']?></td>
-      <td><?=$course['subject']?></td>
+      <td><?=empty($grades[$course['grade_id']]) ? '未指定' : $grades[$course['grade_id']]?></td>
+      <td><?=empty($subjects[$course['subject']]) ? '未指定' : $subjects[$course['subject']]?></td>
       <td><?=$course['date_created']?></td>
       <td>
         <button class="layui-btn layui-btn-mini layui-btn-danger but-course-delete" data-course="<?=$course['id']?>"><i class="layui-icon">&#xe640;</i>&nbsp;删除</button>

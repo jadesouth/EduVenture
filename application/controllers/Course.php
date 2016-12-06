@@ -168,6 +168,10 @@ class Course extends Home_Controller
             $view_var['subjects'] = $this->subject_model->getAll();
             // 所有年级
             $view_var['grades'] = $this->_grades;
+            // 获取学科相关信息
+            $this->load->model('subject_model');
+            $subjects = $this->subject_model->getAll();
+            $view_var['subjects'] = array_column($subjects, 'name', 'id');
             $this->load->view('home/course/list', $view_var);
         }
     }
