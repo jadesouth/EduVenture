@@ -9,6 +9,16 @@
 class User_model extends MY_Model
 {
     /**
+     * User_model constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->_table = 'ee3_user';
+    }
+
+    /**
      * getUserByUserName  根据用户名查询用户
      *
      * @param string $username 用户名
@@ -26,7 +36,7 @@ class User_model extends MY_Model
         }
         $fields = empty($fields) ? 'id' : $fields;
         return $this->db->select($fields)
-            ->from('user')
+            ->from($this->_table)
             ->where('username', $username)
             ->limit(1)
             ->get()
