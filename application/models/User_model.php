@@ -15,7 +15,7 @@ class User_model extends MY_Model
     {
         parent::__construct();
 
-        $this->_table = 'ee3_user';
+        $this->_table = 'user';
     }
 
     /**
