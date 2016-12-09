@@ -54,7 +54,7 @@
  * NOTE: If you change these, also change the error_reporting() code below
  */
 	// define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-	$env = 'qianpinxiu' == gethostname() ?  'production' : 'development';
+	$env = 'EduVenture' == gethostname() ?  'production' : 'development';
 	define('ENVIRONMENT', $env);
 /*
  *---------------------------------------------------------------
