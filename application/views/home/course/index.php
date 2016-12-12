@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-  <title>Edu Venture</title>
+  <title>博雅社会大课堂平台</title>
   <link rel="stylesheet" href="/resources/assets/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/resources/assets/css/ee3.css">
   <link rel="stylesheet" href="/resources/assets/layui/css/layui.css">
@@ -19,7 +19,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Edu Venture</a>
+        <a class="navbar-brand" href="#">博雅社会大课堂平台</a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
@@ -91,6 +91,16 @@
           <input type="hidden" name="lt-lat">
           <input type="hidden" name="rb-lng">
           <input type="hidden" name="rb-lat">
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">学校</label>
+        <div class="layui-input-block">
+            <select name="school">
+                <?php if(! empty($schools)):foreach($schools as $school_k => $school_v):?>
+                    <option value="<?=$school_k?>"><?=$school_v?></option>
+                <?php endforeach;endif;?>
+            </select>
         </div>
       </div>
       <div class="layui-form-item">

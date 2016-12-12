@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EduVenture Login Page</title>
+  <title><博雅社会大课堂平台></博雅社会大课堂平台></title>
   <!-- CSS -->
   <link rel="stylesheet" href="/resources/assets/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="/resources/assets/font-awesome/css/font-awesome.min.css">
@@ -31,7 +31,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-8 col-sm-offset-2 text">
-          <h1><strong>EduVenture</strong> Login Form</h1>
+          <h1><strong>博雅社会大课堂平台</strong></h1>
         </div>
       </div>
       <div class="row">

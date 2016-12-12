@@ -107,11 +107,21 @@
       </div>
     </div>
     <div class="layui-form-item">
+      <label class="layui-form-label">学校</label>
+      <div class="layui-input-block">
+          <select name="school">
+              <?php if(! empty($schools)):foreach($schools as $school_k => $school_v):?>
+                  <option value="<?=$school_k?>"><?=$school_v?></option>
+              <?php endforeach;endif;?>
+          </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
       <label class="layui-form-label">学科</label>
       <div class="layui-input-block">
         <select name="subject">
-          <?php if(! empty($subjects)):foreach($subjects as $subject):?>
-            <option value="<?=$subject['id']?>"><?=$subject['name']?></option>
+          <?php if(! empty($subjects)):foreach($subjects as $subject_id => $subject_value):?>
+            <option value="<?=$subject_id?>"><?=$subject_value?></option>
           <?php endforeach;endif;?>
         </select>
       </div>

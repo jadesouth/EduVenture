@@ -8,6 +8,18 @@
  */
 class Course extends Home_Controller
 {
+    /**
+     * @var array 学校
+     */
+    private $_schools = [
+        1 => '北京大学',
+        2 => '北大附属中学',
+        3 => '北大附属小学',
+        4 => '中关村二小',
+    ];
+    /**
+     * @var array 年级
+     */
     private $_grades = [
         1 => '一年级',
         2 => '二年级',
@@ -27,6 +39,8 @@ class Course extends Home_Controller
         // 获取所有学科
         $this->load->model('subject_model');
         $view_var['subjects'] = $this->subject_model->getAll();
+        // 所有学校
+        $view_var['schools'] = $this->_schools;
         // 所有年级
         $view_var['grades'] = $this->_grades;
 
@@ -50,6 +64,7 @@ class Course extends Home_Controller
             // 创建数据
             $create_data = [
                 'name'         => (string)$this->input->post('name'),
+                'school_id'    => (int)$this->input->post('school'),
                 'user_id'      => $this->_loginUser['id'],
                 'description'  => (string)$this->input->post('desc'),
                 'grade_id'     => (int)$this->input->post('grade'),
@@ -102,6 +117,7 @@ class Course extends Home_Controller
             // 修改数据
             $update_data = [
                 'name'         => (string)$this->input->post('name'),
+                'school_id'    => (int)$this->input->post('school'),
                 'user_id'      => $this->_loginUser['id'],
                 'description'  => (string)$this->input->post('desc'),
                 'grade_id'     => (int)$this->input->post('grade'),
@@ -130,7 +146,7 @@ class Course extends Home_Controller
                 http_ajax_response(1, '非法请求!');
             }
             $this->load->model('course_model');
-            $fields = 'id,name,description,grade_id,subject,is_share,ul_lon,ul_lat,br_lon,br_lat,tn_file_id';
+            $fields = 'id,name,school_id,description,grade_id,subject,is_share,ul_lon,ul_lat,br_lon,br_lat,tn_file_id';
             $course = $this->course_model->getCourse($course_id, $fields);
             if (empty($course)) {
                 http_ajax_response(2, '当前课程不存在!');
@@ -166,6 +182,8 @@ class Course extends Home_Controller
             // 获取所有学科
             $this->load->model('subject_model');
             $view_var['subjects'] = $this->subject_model->getAll();
+            // 所有学校
+            $view_var['schools'] = $this->_schools;
             // 所有年级
             $view_var['grades'] = $this->_grades;
             // 获取学科相关信息

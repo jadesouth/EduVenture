@@ -144,9 +144,10 @@ $(function() {
                     // 给表单赋值
                     $("input[name='course']").val(data.id);
                     $("input[name='name']").val(data.name);
+                    $("select[name='school']").val(data.school_id);
                     $("textarea[name='desc']").val(data.description);
                     $("select[name='share']").val(data.is_share);
-                    $("input[name='task-image']").val(data.tn_file_id);
+                    $("input[name='course-image']").val(data.tn_file_id);
                     var lt_lnglat = "左上经纬(" + data.ul_lon + ", " + data.ul_lat + ")";
                     $("#area-lt-lnglat").html(lt_lnglat);
                     var rb_lnglat = "右下经纬(" + data.br_lon + ", " + data.br_lat + ")";
