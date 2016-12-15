@@ -123,7 +123,6 @@ class Course extends Home_Controller
                 'grade_id'     => (int)$this->input->post('grade'),
                 'subject'      => (int)$this->input->post('subject'),
                 'is_share'     => (int)$this->input->post('share'),
-                'is_ready'     => 0, // 默认不发布
                 'ul_lon'       => (float)$this->input->post('lt-lng'),
                 'ul_lat'       => (float)$this->input->post('lt-lat'),
                 'br_lon'       => (float)$this->input->post('rb-lng'),
