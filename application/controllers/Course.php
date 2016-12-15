@@ -129,7 +129,7 @@ class Course extends Home_Controller
                 'br_lon'       => (float)$this->input->post('rb-lng'),
                 'br_lat'       => (float)$this->input->post('rb-lat'),
                 'date_created' => date('Y-m-d H:i:s'),
-                'tn_file_id'   => (int)$this->input->post('image'),
+                'tn_file_id'   => (int)$this->input->post('course-image'),
             ];
             $this->load->model('course_model');
             $res = $this->course_model->modify($course_id, $update_data);
