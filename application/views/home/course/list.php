@@ -80,7 +80,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">封面图</label>
       <div class="layui-input-block">
-        <input type="file" name="image" class="layui-upload-file course-image">
+        <input type="file" name="cover-image" class="layui-upload-file course-image">
         <input type="hidden" name="course-image" value="">
       </div>
     </div>
