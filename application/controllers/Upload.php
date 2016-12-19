@@ -38,7 +38,7 @@ class Upload extends MY_Controller
     {
         $folder_data = date('Ymd', time());
         $this->_config['upload_path'] = FCPATH . 'resources/uploads/course_cover/' . $folder_data;
-        $this->_config['allowed_types'] = 'gif|jpg|png|bmp';
+        $this->_config['allowed_types'] = 'gif|jpg|jpeg|png|bmp';
         $this->_config['max_size'] = 4080;
         // init upload
         $this->upload->initialize($this->_config);
@@ -73,7 +73,7 @@ class Upload extends MY_Controller
     {
         $folder_data = date('Ymd', time());
         $this->_config['upload_path'] = FCPATH . 'resources/uploads/task_cover/' . $folder_data;
-        $this->_config['allowed_types'] = 'gif|jpg|png|bmp';
+        $this->_config['allowed_types'] = 'gif|jpg|jpeg|png|bmp';
         $this->_config['max_size'] = 4080;
         // init upload
         $this->upload->initialize($this->_config);
