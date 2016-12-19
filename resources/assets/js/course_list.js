@@ -406,7 +406,7 @@ $(function() {
                                             tr += '<button class="layui-btn layui-btn-mini layui-btn-normal but-task-edit" data-task="';
                                             tr += task[i].id + '"><i class="layui-icon">&#xe642;</i>&nbsp;编辑</button>';
                                             tr += '<button class="layui-btn layui-btn-mini but-question-add" data-task="';
-                                            tr += task[i].id + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
+                                            tr += task[i].id + '" data-task-name="' + task[i].task_name + '"><i class="layui-icon">&#xe60a;</i>&nbsp;添加题目</button></td></tr>';
                                             task_tbody.prepend(tr);
                                         }
                                     }
