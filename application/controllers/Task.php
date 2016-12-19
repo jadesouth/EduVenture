@@ -49,7 +49,6 @@ class Task extends Home_Controller
             $this->load->library('form_validation');
             if (false === $this->form_validation->run()) {
                 http_ajax_response(1, $this->form_validation->error_string());
-
                 return false;
             }
             // 创建数据
@@ -64,16 +63,26 @@ class Task extends Home_Controller
             $insert_id = $this->task_model->create($create_data);
             if (0 >= $insert_id) {
                 http_ajax_response(-1, '创建任务失败,请稍后再试!');
-
                 return false;
             }
 
             http_ajax_response(0, '创建任务成功!');
-
             return true;
         } else {
-            http_ajax_response(2, '非法请求!');
+            $epack_id = (int)$this->input->get('course');
+            if (0 >= $epack_id) {
+                http_ajax_response(2, '非法请求!');
+                return false;
+            }
 
+            // 获取课程区域坐标
+            $this->load->model('course_model');
+            $latlng = $this->course_model->getCourse($epack_id, 'id,ul_lon,ul_lat,br_lon,br_lat');
+            if (empty($latlng)) {
+                http_ajax_response(3, '非法请求!');
+                return false;
+            }
+            http_ajax_response(0, '获取课程数据成功!', $latlng);
             return true;
         }
     }
@@ -124,12 +133,15 @@ class Task extends Home_Controller
                 http_ajax_response(1, '非法请求!');
             }
             $this->load->model('task_model');
-            $fields = 'id,name,color,lat,lon';
-            $task = $this->task_model->getTask($task_id, $fields);
-            if (empty($task)) {
+            $fields = 'id,epack_id,name,color,lat,lon';
+            $view_var['task'] = $this->task_model->getTask($task_id, $fields);
+            if (empty($view_var['task'])) {
                 http_ajax_response(2, '当前任务不存在!');
             } else {
-                http_ajax_response(0, '获取课程数据成功!', $task);
+                // 获取课程区域坐标
+                $this->load->model('course_model');
+                $view_var['latlng'] = $this->course_model->getCourse($view_var['task']['epack_id'], 'id,ul_lon,ul_lat,br_lon,br_lat');
+                http_ajax_response(0, '获取课程数据成功!', $view_var);
             }
 
             return true;

@@ -306,20 +306,53 @@ $(function() {
     });
     // 点击添加任务按钮
     var taskFunction = function() {
-        amap.show();
         $("#course-title").html(courseName);
         $("input[name='task-center-lng']").val('');
         $("input[name='task-center-lat']").val('');
-        addTaskIndex = layer.open({
-            type: 1
-            , title: ['添加任务', 'font-weight:bold;']
-            , offset: ['10px', '10px']
-            , area: ['500px', 'auto']
-            , maxmin: true
-            , shade: 0
-            , moveType: 1
-            , content: addTaskSwap
-            , cancel: cancelCreateTaskButton
+        $.ajax({
+            type: "GET",
+            url: "/task/create",
+            data: {course: courseID},
+            dataType: "JSON",
+            success: function(response){
+                if(0 == response.status) {
+                    var latlng = response.data;
+                    if(null != latlng && undefined != latlng && '' != latlng) {
+                        var courseSWLng, courseSWLat, courseNELng, courseNELat;
+                        courseSWLng = latlng.ul_lon;
+                        courseSWLat = latlng.br_lat;
+                        courseNELng = latlng.br_lon;
+                        courseNELat = latlng.ul_lat;
+                        var Bounds = new AMap.Bounds(new AMap.LngLat(courseSWLng, courseSWLat), new AMap.LngLat(courseNELng, courseNELat));
+                        map.setBounds(Bounds);
+                        map.setLimitBounds(Bounds);
+                        map.setStatus({dragEnable: false, doubleClickZoom: false});
+                        map.setZoom(15);
+                        amap.show();
+                        addTaskIndex = layer.open({
+                            type: 1
+                            , title: ['添加任务', 'font-weight:bold;']
+                            , offset: ['10px', '10px']
+                            , area: ['500px', 'auto']
+                            , maxmin: true
+                            , shade: 0
+                            , moveType: 1
+                            , content: addTaskSwap
+                            , cancel: cancelCreateTaskButton
+                        });
+                    } else {
+                        layer.open({
+                            icon: 2,
+                            content: '获取课程区域失败!'
+                        });
+                    }
+                } else {
+                    layer.open({
+                        icon: 2,
+                        content: response.msg
+                    });
+                }
+            }
         });
     };
     addTaskButton.click(taskFunction);
@@ -536,7 +569,8 @@ $(function() {
             dataType: "JSON",
             success: function(response){
                 if(0 == response.status) {
-                    var data = response.data;
+                    var latlng = response.data.latlng;
+                    var data = response.data.task;
                     // 给表单赋值
                     $("input[name='edit-course-task']").val(data.id);
                     $("input[name='edit-task-name']").val(data.name);
@@ -546,6 +580,19 @@ $(function() {
                     $("input[name='task-center-lat']").val(data.lat);
                     $("#edit-course-title").html(courseName);
                     form.render();
+
+                    if(null != latlng && undefined != latlng && '' != latlng) {
+                        var courseSWLng, courseSWLat, courseNELng, courseNELat;
+                        courseSWLng = latlng.ul_lon;
+                        courseSWLat = latlng.br_lat;
+                        courseNELng = latlng.br_lon;
+                        courseNELat = latlng.ul_lat;
+                        var Bounds = new AMap.Bounds(new AMap.LngLat(courseSWLng, courseSWLat), new AMap.LngLat(courseNELng, courseNELat));
+                        map.setBounds(Bounds);
+                        map.setLimitBounds(Bounds);
+                        map.setStatus({dragEnable: false, doubleClickZoom: false});
+                        map.setZoom(15);
+                    }
                     amap.show();
                     editTaskIndex = layer.open({
                         type: 1
