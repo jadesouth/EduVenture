@@ -358,9 +358,10 @@ $(function() {
     addTaskButton.click(taskFunction);
     // 点击添加任务取消按钮
     var cancelCreateTaskButton = function() {
+        amap.hide();
         map.off('mousedown', _onMouseDown);
         map.off('mouseup', _onMouseUp);
-        amap.hide();
+        mouseTool.close(true);
         layer.close(addTaskIndex);
         $('#task-add-form')[0].reset();
         $('#task-area-lnglat').html('任务区域中心点经纬(暂无, 暂无)');
