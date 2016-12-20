@@ -9,15 +9,6 @@
 class Course extends Home_Controller
 {
     /**
-     * @var array 学校
-     */
-    private $_schools = [
-        1 => '北京大学',
-        2 => '北大附属中学',
-        3 => '北大附属小学',
-        4 => '中关村二小',
-    ];
-    /**
      * @var array 年级
      */
     private $_grades = [
@@ -40,7 +31,8 @@ class Course extends Home_Controller
         $this->load->model('subject_model');
         $view_var['subjects'] = $this->subject_model->getAll();
         // 所有学校
-        $view_var['schools'] = $this->_schools;
+        $this->load->model('school_model');
+        $view_var['schools'] = $this->school_model->readSchoolPair();
         // 所有年级
         $view_var['grades'] = $this->_grades;
 
@@ -182,7 +174,8 @@ class Course extends Home_Controller
             $this->load->model('subject_model');
             $view_var['subjects'] = $this->subject_model->getAll();
             // 所有学校
-            $view_var['schools'] = $this->_schools;
+            $this->load->model('school_model');
+            $view_var['schools'] = $this->school_model->readSchoolPair();
             // 所有年级
             $view_var['grades'] = $this->_grades;
             // 获取学科相关信息
