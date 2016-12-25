@@ -486,10 +486,6 @@ $(function() {
         iRectangle();
         $("#task-rectangle-control").hide();
     });
-    // 临时关闭
-    //$('.close-msg').click(function() {
-    //    layer.closeAll();
-    //});
     $('.del-item').delegate('button', 'click', function() {
         $(this).parent().parent().remove();
     });
@@ -622,7 +618,8 @@ $(function() {
         layer.close(editTaskIndex);
         map.off('mousedown', _onMouseDown);
         map.off('mouseup', _onMouseUp);
-        $('#modify-task-form')[0].reset();
+        mouseTool.close(true);
+        $('#task-edit-form')[0].reset();
         $("#edit-course-title").html('');
         $('#task-area-lnglat').html('任务区域中心点经纬(暂无, 暂无)');
         $("input[name='edit-crouse-task']").val(0);
