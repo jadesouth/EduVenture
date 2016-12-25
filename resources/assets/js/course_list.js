@@ -326,7 +326,7 @@ $(function() {
                         var Bounds = new AMap.Bounds(new AMap.LngLat(courseSWLng, courseSWLat), new AMap.LngLat(courseNELng, courseNELat));
                         map.setBounds(Bounds);
                         map.setLimitBounds(Bounds);
-                        map.setStatus({dragEnable: false, doubleClickZoom: false});
+                        //map.setStatus({dragEnable: false, doubleClickZoom: false});
                         map.setZoom(15);
                         amap.show();
                         addTaskIndex = layer.open({
@@ -372,6 +372,7 @@ $(function() {
     taskCancelButton.click(cancelCreateTaskButton);
     // 点击添加任务按钮数据
     addTaskSubmitButton.click(function() {
+        $("input[name='task-course']").val(courseID);
         $.ajax({
             type: 'POST'
             ,url: '/task/create'
